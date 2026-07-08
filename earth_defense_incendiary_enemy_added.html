@@ -2912,7 +2912,7 @@
                 }
             });
 
-            gameLoop();
+            requestAnimationFrame(gameLoop);
         }
 
         function update() {
@@ -4660,7 +4660,54 @@
             ctx.shadowBlur = 0;
         }
 
-        function gameLoop() { update(); draw(); isClicked = false; requestAnimationFrame(gameLoop); }
+        // =========================================================
+        // 固定タイムステップ
+        //
+        // requestAnimationFrameの呼び出し回数は、モニターのリフレッシュレートに依存する。
+        // そのまま毎回update()すると、120Hz/144Hz環境ではゲーム速度も約2倍になる。
+        // ゲームロジックは常に60回/秒で更新し、PCごとの速度差を防ぐ。
+        // =========================================================
+        const FIXED_FPS = 60;
+        const FIXED_FRAME_TIME = 1000 / FIXED_FPS;
+        const MAX_FRAME_DELTA = FIXED_FRAME_TIME * 5;
+
+        let previousFrameTime = null;
+        let fixedFrameAccumulator = 0;
+
+        function gameLoop(currentTime) {
+            if (previousFrameTime === null) {
+                previousFrameTime = currentTime;
+            }
+
+            // タブ復帰時などに、停止中の時間を一気に消化しないよう上限を設ける。
+            const elapsedTime = Math.min(currentTime - previousFrameTime, MAX_FRAME_DELTA);
+            previousFrameTime = currentTime;
+            fixedFrameAccumulator += elapsedTime;
+
+            let didUpdate = false;
+            while (fixedFrameAccumulator >= FIXED_FRAME_TIME) {
+                update();
+                fixedFrameAccumulator -= FIXED_FRAME_TIME;
+                didUpdate = true;
+
+                // クリック入力はupdate()が受け取るまで保持し、処理後に解除する。
+                isClicked = false;
+            }
+
+            // 実際の描画も60FPSに制限する。
+            if (didUpdate) {
+                draw();
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                previousFrameTime = null;
+                fixedFrameAccumulator = 0;
+            }
+        });
+
         window.onload = init;
 
     </script>
