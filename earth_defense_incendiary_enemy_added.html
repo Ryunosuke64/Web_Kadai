@@ -109,8 +109,8 @@
         let frameCount = 0;
         let screenShake = 0;
 
-        const WORLD_WIDTH = 2400;  
-        const WORLD_HEIGHT = 1800; 
+        const WORLD_WIDTH = 3600;
+        const WORLD_HEIGHT = 2700;
 
         /* ============================================================================
            ▼▼▼ 武器パラメータ編集エリア ▼▼▼
@@ -940,6 +940,7 @@
         let enemies = []; let bullets = []; let enemyBullets = []; let items = [];
         let explosions = []; let particles = []; let obstacles = []; let hazards = [];
         let boundaryWalls = [];
+        let stageDecorations = [];
         let defeatedCount = 0;
         let hitStopFrames = 0;
         let hitMarkerTimer = 0;
@@ -1512,7 +1513,9 @@
         }
 
         function igniteFireBomb(bomb) {
-            createExplosion(bomb.targetX, bomb.targetY, bomb.elite ? 72 : 58, 'grenade');
+            const blastRadius = bomb.elite ? 72 : 58;
+            createExplosion(bomb.targetX, bomb.targetY, blastRadius, 'grenade');
+            damageObstaclesInRadius(bomb.targetX, bomb.targetY, blastRadius, bomb.elite ? 38 : 24);
             const patchCount = bomb.elite ? 5 : 3;
             const lineAngle = bomb.travelAngle + Math.PI * 0.5;
             for (let i = 0; i < patchCount; i++) {
@@ -1617,16 +1620,42 @@
             return playerInFire ? 0.58 : 1;
         }
 
-        function createObstacleModel(width, depth, height) {
+        const OBSTACLE_TYPE = Object.freeze({
+            BUILDING: 'building',
+            TOWER: 'tower',
+            FUEL_TANK: 'fuel_tank',
+            ANTENNA: 'antenna',
+            BUNKER: 'bunker',
+            WAREHOUSE: 'warehouse',
+            BARRIER: 'barrier'
+        });
+
+        const OBSTACLE_HP_SCALE = {
+            building: 1.0,
+            tower: 1.7,
+            fuel_tank: 0.55,
+            antenna: 0.45,
+            bunker: 2.4,
+            warehouse: 1.35,
+            barrier: 0.35
+        };
+
+        function calcObstacleHp(type, width, depth, height) {
+            const base = (width * depth) / 70 + height * 0.55;
+            return Math.max(18, Math.round(base * (OBSTACLE_HP_SCALE[type] || 1)));
+        }
+
+        function createBuildingModel(width, depth, height, wallColor = null) {
             const group = new THREE.Group();
             const hueShift = Math.random();
-            const wallColor = hueShift > 0.5 ? 0x1a2e3d : 0x202a35;
-            const wallMat = new THREE.MeshStandardMaterial({ color: wallColor, metalness: 0.58, roughness: 0.52 });
+            const bodyColor = wallColor ?? (hueShift > 0.5 ? 0x1a2e3d : 0x202a35);
+            const wallMat = new THREE.MeshStandardMaterial({ color: bodyColor, metalness: 0.58, roughness: 0.52 });
             const roofMat = new THREE.MeshStandardMaterial({ color: 0x0b1118, metalness: 0.76, roughness: 0.3 });
             const lightMat = new THREE.MeshStandardMaterial({ color: 0x2bd9ff, emissive: 0x087a9b, emissiveIntensity: 1.3, metalness: 0.25, roughness: 0.2 });
 
             const main = new THREE.Mesh(new THREE.BoxGeometry(width, height, depth), wallMat);
             main.position.y = height / 2;
+            main.userData.isMainBody = true;
             group.add(main);
 
             const roof = new THREE.Mesh(new THREE.BoxGeometry(width * 0.92, 8, depth * 0.92), roofMat);
@@ -1644,6 +1673,324 @@
                 group.add(strip);
             }
             return enableShadows(group);
+        }
+
+        function createObstacleModel(type, width, depth, height) {
+            const group = new THREE.Group();
+            group.userData.obstacleType = type;
+
+            switch (type) {
+                case OBSTACLE_TYPE.TOWER: {
+                    const coreW = Math.max(28, width * 0.34);
+                    const coreD = Math.max(28, depth * 0.34);
+                    const towerH = height * 1.75;
+                    const wallMat = new THREE.MeshStandardMaterial({ color: 0x243848, metalness: 0.72, roughness: 0.38 });
+                    const accentMat = new THREE.MeshStandardMaterial({ color: 0xff6a2a, emissive: 0x8a2200, emissiveIntensity: 1.4, metalness: 0.2, roughness: 0.25 });
+                    const core = new THREE.Mesh(new THREE.BoxGeometry(coreW, towerH, coreD), wallMat);
+                    core.position.y = towerH / 2;
+                    core.userData.isMainBody = true;
+                    group.add(core);
+                    for (let i = 1; i <= 4; i++) {
+                        const ring = new THREE.Mesh(new THREE.BoxGeometry(coreW + 10, 6, coreD + 10), wallMat);
+                        ring.position.y = towerH * (i / 5);
+                        group.add(ring);
+                    }
+                    const beacon = new THREE.Mesh(new THREE.SphereGeometry(5, 10, 8), accentMat);
+                    beacon.position.y = towerH + 12;
+                    group.add(beacon);
+                    const mast = new THREE.Mesh(new THREE.CylinderGeometry(2, 3, 18, 8), wallMat);
+                    mast.position.y = towerH + 22;
+                    group.add(mast);
+                    break;
+                }
+                case OBSTACLE_TYPE.FUEL_TANK: {
+                    const tankMat = new THREE.MeshStandardMaterial({ color: 0x6a7078, metalness: 0.82, roughness: 0.28 });
+                    const stripeMat = new THREE.MeshStandardMaterial({ color: 0xff4422, emissive: 0x661100, emissiveIntensity: 0.6, metalness: 0.35, roughness: 0.4 });
+                    const tankR = Math.min(width, depth) * 0.42;
+                    const tank = new THREE.Mesh(new THREE.CylinderGeometry(tankR, tankR, height * 0.85, 18), tankMat);
+                    tank.position.y = height * 0.42;
+                    tank.userData.isMainBody = true;
+                    group.add(tank);
+                    for (let i = 0; i < 3; i++) {
+                        const stripe = new THREE.Mesh(new THREE.TorusGeometry(tankR + 1.5, 2.2, 6, 24), stripeMat);
+                        stripe.rotation.x = Math.PI / 2;
+                        stripe.position.y = height * (0.22 + i * 0.22);
+                        group.add(stripe);
+                    }
+                    const base = new THREE.Mesh(new THREE.BoxGeometry(width * 0.95, 10, depth * 0.95), tankMat);
+                    base.position.y = 5;
+                    group.add(base);
+                    break;
+                }
+                case OBSTACLE_TYPE.ANTENNA: {
+                    const poleMat = new THREE.MeshStandardMaterial({ color: 0x8898a8, metalness: 0.85, roughness: 0.22 });
+                    const dishMat = new THREE.MeshStandardMaterial({ color: 0xd8ecff, emissive: 0x1a5570, emissiveIntensity: 0.8, metalness: 0.55, roughness: 0.18 });
+                    const pole = new THREE.Mesh(new THREE.CylinderGeometry(4, 7, height * 1.6, 8), poleMat);
+                    pole.position.y = height * 0.8;
+                    pole.userData.isMainBody = true;
+                    group.add(pole);
+                    const dish = new THREE.Mesh(new THREE.CylinderGeometry(Math.min(width, depth) * 0.35, Math.min(width, depth) * 0.22, 4, 16), dishMat);
+                    dish.rotation.x = Math.PI / 2;
+                    dish.position.set(0, height * 1.35, Math.min(width, depth) * 0.18);
+                    group.add(dish);
+                    const brace = new THREE.Mesh(new THREE.BoxGeometry(4, height * 0.55, 4), poleMat);
+                    brace.position.set(Math.min(width, depth) * 0.12, height * 0.55, 0);
+                    brace.rotation.z = 0.35;
+                    group.add(brace);
+                    break;
+                }
+                case OBSTACLE_TYPE.BUNKER: {
+                    const bunkerH = height * 0.55;
+                    const wallMat = new THREE.MeshStandardMaterial({ color: 0x2a3238, metalness: 0.65, roughness: 0.62 });
+                    const slitMat = new THREE.MeshStandardMaterial({ color: 0x111820, metalness: 0.4, roughness: 0.8 });
+                    const body = new THREE.Mesh(new THREE.BoxGeometry(width, bunkerH, depth), wallMat);
+                    body.position.y = bunkerH / 2;
+                    body.userData.isMainBody = true;
+                    group.add(body);
+                    const cap = new THREE.Mesh(new THREE.BoxGeometry(width * 0.88, 12, depth * 0.88), wallMat);
+                    cap.position.y = bunkerH + 6;
+                    group.add(cap);
+                    for (let i = -1; i <= 1; i++) {
+                        const slit = new THREE.Mesh(new THREE.BoxGeometry(width * 0.12, 6, 8), slitMat);
+                        slit.position.set(i * width * 0.22, bunkerH * 0.55, depth / 2 + 1);
+                        group.add(slit);
+                    }
+                    break;
+                }
+                case OBSTACLE_TYPE.WAREHOUSE: {
+                    const wallMat = new THREE.MeshStandardMaterial({ color: 0x1f2830, metalness: 0.48, roughness: 0.58 });
+                    const doorMat = new THREE.MeshStandardMaterial({ color: 0xffc44a, emissive: 0x664400, emissiveIntensity: 0.7, metalness: 0.2, roughness: 0.35 });
+                    const body = new THREE.Mesh(new THREE.BoxGeometry(width, height * 0.72, depth), wallMat);
+                    body.position.y = height * 0.36;
+                    body.userData.isMainBody = true;
+                    group.add(body);
+                    const roof = new THREE.Mesh(new THREE.BoxGeometry(width * 1.02, 6, depth * 1.02), wallMat);
+                    roof.position.y = height * 0.72 + 3;
+                    group.add(roof);
+                    const door = new THREE.Mesh(new THREE.BoxGeometry(width * 0.28, height * 0.42, 4), doorMat);
+                    door.position.set(0, height * 0.22, depth / 2 + 2);
+                    group.add(door);
+                    for (let i = 0; i < 3; i++) {
+                        const vent = new THREE.Mesh(new THREE.BoxGeometry(18, 4, 18), wallMat);
+                        vent.position.set(-width * 0.28 + i * width * 0.28, height * 0.72 + 8, 0);
+                        group.add(vent);
+                    }
+                    break;
+                }
+                case OBSTACLE_TYPE.BARRIER: {
+                    const sandMat = new THREE.MeshStandardMaterial({ color: 0x6a5a42, metalness: 0.15, roughness: 0.92 });
+                    const bagMat = new THREE.MeshStandardMaterial({ color: 0x8a7458, metalness: 0.08, roughness: 0.95 });
+                    const wall = new THREE.Mesh(new THREE.BoxGeometry(width, height * 0.55, depth), sandMat);
+                    wall.position.y = height * 0.28;
+                    wall.userData.isMainBody = true;
+                    group.add(wall);
+                    for (let i = 0; i < 4; i++) {
+                        const bag = new THREE.Mesh(new THREE.BoxGeometry(width * 0.22, height * 0.18, depth * 0.8), bagMat);
+                        bag.position.set(-width * 0.28 + i * width * 0.18, height * 0.58, 0);
+                        group.add(bag);
+                    }
+                    break;
+                }
+                default:
+                    return createBuildingModel(width, depth, height);
+            }
+            return enableShadows(group);
+        }
+
+        function addStageDecoration(mesh) {
+            scene3D.add(mesh);
+            stageDecorations.push(mesh);
+        }
+
+        function canPlaceObstacle(x, y, w, h, playerX, playerY, minDist = 320) {
+            const cx = x + w * 0.5;
+            const cy = y + h * 0.5;
+            if (Math.hypot(cx - playerX, cy - playerY) < minDist) return false;
+            for (const o of obstacles) {
+                if (x < o.x + o.w + 40 && x + w + 40 > o.x && y < o.y + o.h + 40 && y + h + 40 > o.y) return false;
+            }
+            return true;
+        }
+
+        function spawnObstacle(type, x, y, w, h, height, playerX, playerY, hpOverride = null) {
+            if (!canPlaceObstacle(x, y, w, h, playerX, playerY)) return false;
+            const hp = hpOverride ?? calcObstacleHp(type, w, h, height);
+            const obs = {
+                type,
+                x, y, w, h,
+                height,
+                hp,
+                maxHp: hp,
+                hitFlash: 0,
+                mesh: null
+            };
+            obs.mesh = createObstacleModel(type, w, h, height);
+            obs.mesh.position.set(x + w / 2, 0, y + h / 2);
+            scene3D.add(obs.mesh);
+            obstacles.push(obs);
+            return true;
+        }
+
+        function addRoadMarkings() {
+            const roadMat = new THREE.MeshStandardMaterial({ color: 0x1a2834, metalness: 0.12, roughness: 0.92 });
+            const lineMat = new THREE.MeshBasicMaterial({ color: 0xffcc44, transparent: true, opacity: 0.35, depthWrite: false });
+            const padMat = new THREE.MeshBasicMaterial({ color: 0x2bd9ff, transparent: true, opacity: 0.28, depthWrite: false });
+
+            const hRoad = new THREE.Mesh(new THREE.PlaneGeometry(WORLD_WIDTH, 140), roadMat);
+            hRoad.rotation.x = -Math.PI / 2;
+            hRoad.position.set(WORLD_WIDTH / 2, 0.15, WORLD_HEIGHT / 2);
+            addStageDecoration(hRoad);
+
+            const vRoad = new THREE.Mesh(new THREE.PlaneGeometry(140, WORLD_HEIGHT), roadMat);
+            vRoad.rotation.x = -Math.PI / 2;
+            vRoad.position.set(WORLD_WIDTH / 2, 0.15, WORLD_HEIGHT / 2);
+            addStageDecoration(vRoad);
+
+            for (let i = -8; i <= 8; i++) {
+                if (i === 0) continue;
+                const dashH = new THREE.Mesh(new THREE.PlaneGeometry(42, 6), lineMat);
+                dashH.rotation.x = -Math.PI / 2;
+                dashH.position.set(WORLD_WIDTH / 2 + i * 110, 0.25, WORLD_HEIGHT / 2);
+                addStageDecoration(dashH);
+                const dashV = new THREE.Mesh(new THREE.PlaneGeometry(6, 42), lineMat);
+                dashV.rotation.x = -Math.PI / 2;
+                dashV.position.set(WORLD_WIDTH / 2, 0.25, WORLD_HEIGHT / 2 + i * 110);
+                addStageDecoration(dashV);
+            }
+
+            const pad = new THREE.Mesh(new THREE.RingGeometry(70, 95, 32), padMat);
+            pad.rotation.x = -Math.PI / 2;
+            pad.position.set(WORLD_WIDTH / 2, 0.3, WORLD_HEIGHT / 2);
+            addStageDecoration(pad);
+
+            const padInner = new THREE.Mesh(new THREE.RingGeometry(18, 24, 24), padMat);
+            padInner.rotation.x = -Math.PI / 2;
+            padInner.position.set(WORLD_WIDTH / 2, 0.32, WORLD_HEIGHT / 2);
+            addStageDecoration(padInner);
+
+            const corners = [
+                [WORLD_WIDTH * 0.18, WORLD_HEIGHT * 0.18],
+                [WORLD_WIDTH * 0.82, WORLD_HEIGHT * 0.18],
+                [WORLD_WIDTH * 0.18, WORLD_HEIGHT * 0.82],
+                [WORLD_WIDTH * 0.82, WORLD_HEIGHT * 0.82]
+            ];
+            corners.forEach(([cx, cy]) => {
+                const zone = new THREE.Mesh(new THREE.RingGeometry(55, 68, 24), new THREE.MeshBasicMaterial({ color: 0xff5533, transparent: true, opacity: 0.18, depthWrite: false }));
+                zone.rotation.x = -Math.PI / 2;
+                zone.position.set(cx, 0.28, cy);
+                addStageDecoration(zone);
+            });
+        }
+
+        function generateStageMap(playerX, playerY) {
+            obstacles = [];
+            stageDecorations.forEach(removeMesh);
+            stageDecorations = [];
+            addRoadMarkings();
+
+            const landmarks = [
+                { type: OBSTACLE_TYPE.TOWER, x: WORLD_WIDTH * 0.12, y: WORLD_HEIGHT * 0.10, w: 70, h: 70, height: 160 },
+                { type: OBSTACLE_TYPE.TOWER, x: WORLD_WIDTH * 0.84, y: WORLD_HEIGHT * 0.12, w: 65, h: 65, height: 145 },
+                { type: OBSTACLE_TYPE.ANTENNA, x: WORLD_WIDTH * 0.78, y: WORLD_HEIGHT * 0.78, w: 55, h: 55, height: 130 },
+                { type: OBSTACLE_TYPE.BUNKER, x: WORLD_WIDTH * 0.08, y: WORLD_HEIGHT * 0.72, w: 220, h: 180, height: 90 },
+                { type: OBSTACLE_TYPE.WAREHOUSE, x: WORLD_WIDTH * 0.68, y: WORLD_HEIGHT * 0.38, w: 280, h: 120, height: 85 },
+                { type: OBSTACLE_TYPE.WAREHOUSE, x: WORLD_WIDTH * 0.14, y: WORLD_HEIGHT * 0.40, w: 260, h: 110, height: 80 },
+                { type: OBSTACLE_TYPE.FUEL_TANK, x: WORLD_WIDTH * 0.20, y: WORLD_HEIGHT * 0.16, w: 90, h: 90, height: 75 },
+                { type: OBSTACLE_TYPE.FUEL_TANK, x: WORLD_WIDTH * 0.26, y: WORLD_HEIGHT * 0.20, w: 85, h: 85, height: 72 },
+                { type: OBSTACLE_TYPE.FUEL_TANK, x: WORLD_WIDTH * 0.23, y: WORLD_HEIGHT * 0.24, w: 80, h: 80, height: 70 }
+            ];
+            landmarks.forEach(lm => spawnObstacle(lm.type, lm.x, lm.y, lm.w, lm.h, lm.height, playerX, playerY));
+
+            const barrierSites = [
+                [WORLD_WIDTH * 0.42, WORLD_HEIGHT * 0.30],
+                [WORLD_WIDTH * 0.58, WORLD_HEIGHT * 0.68],
+                [WORLD_WIDTH * 0.30, WORLD_HEIGHT * 0.58],
+                [WORLD_WIDTH * 0.70, WORLD_HEIGHT * 0.42],
+                [WORLD_WIDTH * 0.48, WORLD_HEIGHT * 0.18],
+                [WORLD_WIDTH * 0.52, WORLD_HEIGHT * 0.82]
+            ];
+            barrierSites.forEach(([bx, by]) => {
+                spawnObstacle(OBSTACLE_TYPE.BARRIER, bx, by, 120, 35, 45, playerX, playerY);
+            });
+
+            let placed = 0;
+            let attempts = 0;
+            while (placed < 32 && attempts < 220) {
+                attempts++;
+                const ow = Math.random() * 140 + 55;
+                const oh = Math.random() * 140 + 55;
+                const ox = Math.random() * (WORLD_WIDTH - ow - 120) + 60;
+                const oy = Math.random() * (WORLD_HEIGHT - oh - 120) + 60;
+                const height = Math.random() * 95 + 55;
+                const roll = Math.random();
+                const type = roll < 0.62 ? OBSTACLE_TYPE.BUILDING
+                    : roll < 0.78 ? OBSTACLE_TYPE.WAREHOUSE
+                    : roll < 0.90 ? OBSTACLE_TYPE.BUNKER
+                    : OBSTACLE_TYPE.TOWER;
+                if (spawnObstacle(type, ox, oy, ow, oh, height, playerX, playerY)) placed++;
+            }
+        }
+
+        function updateObstacleVisual(obs) {
+            if (!obs.mesh) return;
+            const ratio = obs.hp / obs.maxHp;
+            obs.mesh.traverse(child => {
+                if (child.isMesh && child.material && child.userData.isMainBody) {
+                    if (!child.userData.baseColor) child.userData.baseColor = child.material.color.getHex();
+                    if (obs.hitFlash > 0) {
+                        child.material.emissive?.setHex(0xff8844);
+                        child.material.emissiveIntensity = 0.85;
+                    } else {
+                        child.material.emissive?.setHex(0x000000);
+                        child.material.emissiveIntensity = 0;
+                        const damaged = 1 - ratio;
+                        child.material.color.setHex(child.userData.baseColor);
+                        if (damaged > 0.2) child.material.color.offsetHSL(0, -0.08, -damaged * 0.1);
+                    }
+                }
+            });
+        }
+
+        function destroyObstacle(index) {
+            const obs = obstacles[index];
+            if (!obs) return;
+            const cx = obs.x + obs.w / 2;
+            const cy = obs.y + obs.h / 2;
+            createImpactEffect(cx, cy, 'explosive', 0x99aabb, 1.15 + obs.w / 180);
+            screenShake = Math.max(screenShake, obs.type === OBSTACLE_TYPE.FUEL_TANK ? 6 : 3);
+            if (obs.type === OBSTACLE_TYPE.FUEL_TANK) {
+                createExplosion(cx, cy, 95, 'standard');
+                damageObstaclesInRadius(cx, cy, 95, 55, index);
+            }
+            removeMesh(obs.mesh);
+            obstacles.splice(index, 1);
+        }
+
+        function damageObstacle(index, amount, sourceX, sourceY) {
+            const obs = obstacles[index];
+            if (!obs || obs.hp <= 0) return false;
+            obs.hp -= amount;
+            obs.hitFlash = 6;
+            updateObstacleVisual(obs);
+            if (obs.hp <= 0) {
+                destroyObstacle(index);
+                return true;
+            }
+            return false;
+        }
+
+        function damageObstaclesInRadius(x, y, radius, damage, skipIndex = -1) {
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                if (i === skipIndex) continue;
+                const o = obstacles[i];
+                const cx = o.x + o.w / 2;
+                const cy = o.y + o.h / 2;
+                const dist = Math.hypot(cx - x, cy - y);
+                if (dist <= radius + Math.max(o.w, o.h) * 0.35) {
+                    const falloff = Math.max(0.35, 1 - dist / Math.max(1, radius));
+                    damageObstacle(i, damage * falloff, x, y);
+                }
+            }
         }
 
         function getWeaponVisualStyle(weapon) {
@@ -2040,9 +2387,9 @@
         function init3D() {
             scene3D = new THREE.Scene();
             scene3D.background = new THREE.Color(0x03070d);
-            scene3D.fog = new THREE.FogExp2(0x040a11, 0.00062);
+            scene3D.fog = new THREE.FogExp2(0x040a11, 0.00042);
 
-            camera3D = new THREE.PerspectiveCamera(55, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 3200);
+            camera3D = new THREE.PerspectiveCamera(55, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 4800);
             camera3D.position.set(WORLD_WIDTH / 2, 520, WORLD_HEIGHT / 2 + 420);
 
             renderer3D = new THREE.WebGLRenderer({ canvas: document.getElementById('gameCanvas3D'), antialias: true, powerPreference: 'high-performance' });
@@ -2065,12 +2412,12 @@
             dirLight.position.set(500, 850, 260);
             dirLight.castShadow = true;
             dirLight.shadow.mapSize.set(2048, 2048);
-            dirLight.shadow.camera.left = -1300;
-            dirLight.shadow.camera.right = 1300;
-            dirLight.shadow.camera.top = 1100;
-            dirLight.shadow.camera.bottom = -1100;
+            dirLight.shadow.camera.left = -1950;
+            dirLight.shadow.camera.right = 1950;
+            dirLight.shadow.camera.top = 1650;
+            dirLight.shadow.camera.bottom = -1650;
             dirLight.shadow.camera.near = 100;
-            dirLight.shadow.camera.far = 1900;
+            dirLight.shadow.camera.far = 2800;
             dirLight.shadow.bias = -0.00035;
             dirLight.target.position.set(WORLD_WIDTH / 2, 0, WORLD_HEIGHT / 2);
             scene3D.add(dirLight.target);
@@ -2159,6 +2506,8 @@
             fireDamageCooldown = 0;
             playerInFire = false;
             if (player.mesh) { removeMesh(player.mesh); player.mesh = null; }
+            stageDecorations.forEach(removeMesh);
+            stageDecorations = [];
             boundaryWalls = [];
         }
         // =========================================================
@@ -2377,6 +2726,7 @@
                     hitScale: 0.1
                 });
             }
+            damageObstaclesInRadius(x, y, radius, weapon.damage * damageScale * 1.05);
         }
 
         function triggerSupportImpact(strike, x, y, options = {}) {
@@ -2654,6 +3004,7 @@
                     const cx = b.x + Math.cos(angle) * dist;
                     const cy = b.y + Math.sin(angle) * dist;
                     createExplosion(cx, cy, profile.clusterRadius, 'cluster');
+                    damageObstaclesInRadius(cx, cy, profile.clusterRadius, profile.clusterDamage * 0.85);
                     for (let k = 0; k < enemies.length; k++) {
                         const enemy = enemies[k];
                         if (Math.hypot(enemy.x - cx, enemy.y - cy) <= profile.clusterRadius) {
@@ -2674,6 +3025,7 @@
             if (profile.lingeringField) {
                 createLingeringField(b.x, b.y, profile.fieldRadius, b.color, profile.fieldDamage, profile.fieldDuration);
             }
+            damageObstaclesInRadius(b.x, b.y, b.blastRadius, b.damage * 1.15);
         }
 
         function getPauseButtonRect(index) {
@@ -3081,20 +3433,7 @@
                         });
 
                         obstacles = [];
-                        for (let i = 0; i < 40; i++) {
-                            let ow = Math.random() * 150 + 50; 
-                            let oh = Math.random() * 150 + 50; 
-                            let ox = Math.random() * (WORLD_WIDTH - ow);
-                            let oy = Math.random() * (WORLD_HEIGHT - oh);
-                            if (Math.hypot((ox + ow/2) - player.x, (oy + oh/2) - player.y) > 300) {
-                                const height = Math.random() * 100 + 55;
-                                let obs = { x: ox, y: oy, w: ow, h: oh, mesh: null };
-                                obs.mesh = createObstacleModel(ow, oh, height);
-                                obs.mesh.position.set(ox + ow/2, 0, oy + oh/2);
-                                scene3D.add(obs.mesh);
-                                obstacles.push(obs);
-                            }
-                        }
+                        generateStageMap(player.x, player.y);
                     }
                     break;
 
@@ -3112,6 +3451,14 @@
                     else if (player.y > WORLD_HEIGHT - player.size) player.y = WORLD_HEIGHT - player.size;
 
                     for (let o of obstacles) resolveCollision(player, o);
+
+                    for (let oi = 0; oi < obstacles.length; oi++) {
+                        const o = obstacles[oi];
+                        if (o.hitFlash > 0) {
+                            o.hitFlash--;
+                            updateObstacleVisual(o);
+                        }
+                    }
 
                     updateLockOnTarget();
                     const aimPosition = getAimPosition();
@@ -3346,15 +3693,18 @@
 
                         let hitWall = false;
                         let hitObs = null;
-                        for (let o of obstacles) {
+                        let hitObsIndex = -1;
+                        for (let oi = 0; oi < obstacles.length; oi++) {
+                            let o = obstacles[oi];
                             if (b.x + b.size > o.x && b.x - b.size < o.x + o.w && b.y + b.size > o.y && b.y - b.size < o.y + o.h) {
-                                hitWall = true; hitObs = o; break;
+                                hitWall = true; hitObs = o; hitObsIndex = oi; break;
                             }
                         }
 
                         if (hitWall) {
                             if (b.bounces > 0) {
                                 b.bounces--;
+                                if (hitObsIndex >= 0) damageObstacle(hitObsIndex, b.damage * 0.45, b.x, b.y);
                                 let overlapLeft = Math.abs((b.x + b.size) - hitObs.x);
                                 let overlapRight = Math.abs(hitObs.x + hitObs.w - (b.x - b.size));
                                 let overlapTop = Math.abs((b.y + b.size) - hitObs.y);
@@ -3371,6 +3721,8 @@
                                 if (b.mesh) b.mesh.position.set(b.x, 15, b.y);
                                 continue;
                             }
+
+                            if (hitObsIndex >= 0) damageObstacle(hitObsIndex, b.damage, b.x, b.y);
 
                             if (b.type === 'rocket' || b.type === 'missile') {
                                 detonateProjectile(b);
@@ -4462,8 +4814,24 @@
             ctx.strokeStyle = '#0f0'; ctx.lineWidth = 1;
             ctx.strokeRect(mmX, mmY, mmW, mmH);
 
-            ctx.fillStyle = 'rgba(0, 100, 150, 0.5)';
-            for(let o of obstacles) ctx.fillRect(mmX + o.x * scaleX, mmY + o.y * scaleY, o.w * scaleX, o.h * scaleY);
+            const obstacleMinimapColors = {
+                building: 'rgba(0, 100, 150, 0.5)',
+                tower: 'rgba(255, 120, 40, 0.65)',
+                fuel_tank: 'rgba(255, 60, 30, 0.7)',
+                antenna: 'rgba(120, 200, 255, 0.6)',
+                bunker: 'rgba(80, 90, 110, 0.7)',
+                warehouse: 'rgba(60, 130, 170, 0.55)',
+                barrier: 'rgba(140, 110, 70, 0.5)'
+            };
+            for (let o of obstacles) {
+                ctx.fillStyle = obstacleMinimapColors[o.type] || obstacleMinimapColors.building;
+                ctx.fillRect(mmX + o.x * scaleX, mmY + o.y * scaleY, o.w * scaleX, o.h * scaleY);
+                if (o.hp < o.maxHp) {
+                    ctx.fillStyle = 'rgba(255, 80, 40, 0.55)';
+                    const dmgRatio = 1 - o.hp / o.maxHp;
+                    ctx.fillRect(mmX + o.x * scaleX, mmY + o.y * scaleY, o.w * scaleX * dmgRatio, 2);
+                }
+            }
             
             for (let item of items) {
                 ctx.fillStyle = item.type === 'heal' ? '#39f5ff' : '#ff3b76';
