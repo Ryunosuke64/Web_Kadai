@@ -265,15 +265,15 @@
                     },
 
                     {
-                        name: 'リコシェットライフル',
-                        desc: '特殊弾頭が壁や障害物で反射するライフル。|直接狙えない敵への攻撃にも利用できる。',
+                        name: '試作型バウンドライフル',
+                        desc: '壁や障害物で反射する特殊弾頭を使用した試作兵器。|試作品のため、弾速が遅く、反射回数も少ない。',
                         type: WEAPON_TYPE.NORMAL,
-                        damage: 1.8,
-                        speed: 27,
-                        size: 10,
+                        damage: 1.4,
+                        speed: 6,
+                        size: 15,
                         color: 0x5DE4FF,
                         maxAmmo: 100,
-                        fireRate: SECONDS(0.1),
+                        fireRate: SECONDS(0.05),
                         reloadTime: SECONDS(1.5),
                         bounces: 2
                     }
@@ -346,17 +346,17 @@
 
                     {
                         name: 'バウンドショット',
-                        desc: '障害物で反射する散弾を発射する特殊銃。|閉所では反射した弾が長く残り、高い制圧力を発揮。',
+                        desc: '壁に当たると反射する特性を持つ特殊弾頭を使用した兵器。|同時に50発を発射し、圧倒的な制圧力を持つ。',
                         type: WEAPON_TYPE.SHOTGUN,
-                        damage: 1.1,
-                        speed: 20,
-                        size: 25,
+                        damage: 0.35,
+                        speed: 30,
+                        size: 16,
                         color: 0x39FFBD,
                         maxAmmo: 10,
                         fireRate: SECONDS(0.5667),
                         reloadTime: SECONDS(2.4167),
-                        count: 12,
-                        spread: 0.52,
+                        count: 50,
+                        spread: 0.82,
                         bounces: 3
                     },
 
@@ -458,7 +458,7 @@
                         damage: 2.4,
                         speed: 50,
                         size: 10,
-                        color: 0xFF5DE1,
+                        color: 0xFF3B19,
                         maxAmmo: 48,
                         fireRate: SECONDS(0.0833),
                         reloadTime: SECONDS(1.8333),
@@ -504,17 +504,17 @@
 
                     {
                         name: 'グレネードランチャー',
-                        desc: '壁で反射し、一定時間後に爆発する榴弾を発射。|障害物の裏へ弾を送り込むことができる。',
+                        desc: '壁で反射し、2秒後後に爆発する榴弾を発射。',
                         type: WEAPON_TYPE.ROCKET,
                         damage: 12,
-                        speed: 13,
-                        size: 10,
-                        color: 0xFFA557,
+                        speed: 20,
+                        size: 20,
+                        color: 0xFF0000,
                         maxAmmo: 6,
                         fireRate: SECONDS(0.5333),
                         reloadTime: SECONDS(2),
                         bounces: 24,
-                        timer: SECONDS(1.3667),
+                        timer: SECONDS(2.0),
                         blastRadius: 110,
                         knockback: 16,
                         explosionStyle: EXPLOSION_STYLE.GRENADE,
@@ -554,7 +554,7 @@
                         blastRadius: 92,
                         knockback: 14,
                         explosionStyle: EXPLOSION_STYLE.SEEKER,
-                        turnSpeed: 0.095
+                        turnSpeed: 0.195
                     },
 
                     {
@@ -564,7 +564,7 @@
                         damage: 24,
                         speed: 4.5,
                         size: 30,
-                        color: 0x20FFC8,
+                        color: 0x0088FF,
                         maxAmmo: 1,
                         fireRate: SECONDS(1.4167),
                         reloadTime: SECONDS(4),
@@ -710,7 +710,7 @@
                     },
 
                     {
-                        name: 'クライオスプレー',
+                        name: '冷却砲',
                         desc: '超低温の粒子を広範囲へ噴射する先進科学研究所の実験兵器。|射程と拡散範囲のバランスがよく、接近戦で扱いやすい。',
                         type: WEAPON_TYPE.SPRAY,
                         damage: 0.48,
@@ -729,7 +729,7 @@
                         name: 'スーパーバウンドガン',
                         desc: '実戦配備された新型跳躍弾を使用し、|壁や障害物で激しく反射する光弾を発射する究極兵器。',
                         type: WEAPON_TYPE.NORMAL,
-                        damage: 2.0,
+                        damage: 1.4,
                         speed: 40,
                         size: 30,
                         color: 0x21B9FF,
@@ -823,7 +823,7 @@
                         damage: 14.5,
                         color: 0xFFDF74,
                         maxAmmo: 4,
-                        fireRate: SECONDS(1.75),
+                        fireRate: SECONDS(0.5),
                         reloadTime: SECONDS(4.5),
                         count: 90,
                         blastRadius: 100,
@@ -835,7 +835,7 @@
                     },
 
                     {
-                        name: '軌道レーザー照射',
+                        name: '軌道レーザー砲-サテライト',
                         desc: '衛星兵器が指定地点へ高出力レーザーを照射する。|一定時間、範囲内の敵へ継続ダメージを与える。',
                         type: WEAPON_TYPE.SUPPORT,
                         supportKind: SUPPORT_KIND.ORBITAL_LASER,
@@ -843,7 +843,7 @@
                         color: 0x5DEAFF,
                         maxAmmo: 1,
                         fireRate: SECONDS(3),
-                        reloadTime: SECONDS(8),
+                        reloadTime: SECONDS(15),
                         blastRadius: 450,
                         knockback: 2,
                         designationTime: SECONDS(2),
@@ -875,17 +875,17 @@
                     },
 
                     {
-                        name: '天槍キネティック',
+                        name: '軌道レーザー砲-グングニル',
                         desc: '軌道上から超高速の金属弾を落下させる決戦支援兵器。|着弾まで遅いが、単発威力と吹っ飛ばし性能は最大級。',
                         type: WEAPON_TYPE.SUPPORT,
                         supportKind: SUPPORT_KIND.KINETIC,
                         damage: 60,
-                        color: 0xE8F5FF,
+                        color: 0x39FF38,
                         maxAmmo: 1,
                         fireRate: SECONDS(4),
                         reloadTime: SECONDS(20),
                         count: 1,
-                        blastRadius: 300,
+                        blastRadius: 500,
                         knockback: 44,
                         designationTime: SECONDS(2),
                         strikeDelay: SECONDS(2.0833)
@@ -956,6 +956,17 @@
         let playerInFire = false;
         const MAX_FIRE_HAZARDS = 18;
         const MAX_FIRE_BOMBS = 6;
+
+        // ボス戦管理
+        const BOSS_TRIGGER_KILLS = 300;
+        let boss = null;
+        let bossSpawned = false;
+        let bossDefeated = false;
+        let bossIntroTimer = 0;
+        let bossVictoryTimer = 0;
+        let bossAttackNoticeTimer = 0;
+        let bossAttackNotice = '';
+        let bossAttacks = [];
 
         // ポーズ画面
         let isPaused = false;
@@ -1403,6 +1414,113 @@
             const glow = makeGlowSprite(glowColor, size * (elite ? 5.2 : 4.2), elite ? 0.36 : 0.25);
             glow.position.set(0, size, 0);
             group.add(glow);
+            return enableShadows(group);
+        }
+
+        function createBossModel(size) {
+            const group = new THREE.Group();
+            const armorMat = new THREE.MeshStandardMaterial({ color: 0x28172f, metalness: 0.88, roughness: 0.2 });
+            const armorAltMat = new THREE.MeshStandardMaterial({ color: 0x502144, metalness: 0.72, roughness: 0.25 });
+            const darkMat = new THREE.MeshStandardMaterial({ color: 0x09070f, metalness: 0.95, roughness: 0.16 });
+            const coreMat = new THREE.MeshStandardMaterial({
+                color: 0xff4778,
+                emissive: 0xff083f,
+                emissiveIntensity: 2.7,
+                metalness: 0.2,
+                roughness: 0.08
+            });
+            const energyMat = new THREE.MeshBasicMaterial({
+                color: 0xff4fa1,
+                transparent: true,
+                opacity: 0.78,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            });
+
+            const lowerBody = new THREE.Mesh(new THREE.CylinderGeometry(size * 0.68, size * 0.92, size * 0.72, 12), darkMat);
+            lowerBody.position.y = size * 0.7;
+            group.add(lowerBody);
+
+            const torso = new THREE.Mesh(new THREE.DodecahedronGeometry(size * 0.82, 1), armorMat);
+            torso.scale.set(1.2, 0.9, 1.05);
+            torso.position.y = size * 1.45;
+            group.add(torso);
+
+            const chest = new THREE.Mesh(new THREE.SphereGeometry(size * 0.34, 18, 12), coreMat);
+            chest.scale.set(1.1, 0.75, 0.5);
+            chest.position.set(0, size * 1.48, size * 0.78);
+            group.add(chest);
+
+            const head = new THREE.Mesh(new THREE.OctahedronGeometry(size * 0.38, 1), armorAltMat);
+            head.scale.set(1.15, 0.85, 1.2);
+            head.position.set(0, size * 2.25, size * 0.1);
+            group.add(head);
+
+            const eye = new THREE.Mesh(new THREE.BoxGeometry(size * 0.56, size * 0.08, size * 0.12), coreMat);
+            eye.position.set(0, size * 2.27, size * 0.46);
+            group.add(eye);
+
+            [-1, 1].forEach((side) => {
+                const shoulder = new THREE.Mesh(new THREE.SphereGeometry(size * 0.42, 12, 8), armorAltMat);
+                shoulder.scale.set(1.35, 0.75, 1.1);
+                shoulder.position.set(side * size * 0.92, size * 1.65, 0);
+                group.add(shoulder);
+
+                const arm = new THREE.Mesh(new THREE.BoxGeometry(size * 0.35, size * 0.92, size * 0.42), darkMat);
+                arm.position.set(side * size * 1.18, size * 1.02, size * 0.05);
+                arm.rotation.z = side * 0.2;
+                group.add(arm);
+
+                const claw = new THREE.Mesh(new THREE.ConeGeometry(size * 0.25, size * 0.7, 6), coreMat);
+                claw.position.set(side * size * 1.25, size * 0.42, size * 0.08);
+                claw.rotation.z = side * Math.PI;
+                group.add(claw);
+
+                const cannonBase = new THREE.Mesh(new THREE.CylinderGeometry(size * 0.2, size * 0.28, size * 0.68, 10), darkMat);
+                cannonBase.rotation.x = Math.PI / 2;
+                cannonBase.position.set(side * size * 0.72, size * 1.92, size * 0.66);
+                group.add(cannonBase);
+
+                const cannonMuzzle = new THREE.Mesh(new THREE.TorusGeometry(size * 0.22, size * 0.055, 8, 24), coreMat);
+                cannonMuzzle.position.set(side * size * 0.72, size * 1.92, size * 1.02);
+                group.add(cannonMuzzle);
+            });
+
+            for (let i = 0; i < 4; i++) {
+                const angle = i * Math.PI * 0.5 + Math.PI * 0.25;
+                const leg = new THREE.Mesh(new THREE.BoxGeometry(size * 0.28, size * 0.62, size * 0.8), darkMat);
+                leg.position.set(Math.cos(angle) * size * 0.78, size * 0.35, Math.sin(angle) * size * 0.78);
+                leg.rotation.y = -angle;
+                leg.rotation.z = Math.cos(angle) * 0.18;
+                group.add(leg);
+
+                const foot = new THREE.Mesh(new THREE.BoxGeometry(size * 0.4, size * 0.18, size * 0.78), armorAltMat);
+                foot.position.set(Math.cos(angle) * size * 0.98, size * 0.08, Math.sin(angle) * size * 0.98);
+                foot.rotation.y = -angle;
+                group.add(foot);
+            }
+
+            const ringA = new THREE.Mesh(new THREE.TorusGeometry(size * 1.12, size * 0.055, 8, 48), energyMat);
+            ringA.rotation.x = Math.PI / 2;
+            ringA.position.y = size * 1.12;
+            group.add(ringA);
+
+            const ringB = new THREE.Mesh(new THREE.TorusGeometry(size * 0.82, size * 0.04, 8, 40), energyMat.clone());
+            ringB.rotation.x = Math.PI / 2;
+            ringB.position.y = size * 2.08;
+            group.add(ringB);
+
+            const aura = makeGlowSprite(0xff276d, size * 5.8, 0.34);
+            aura.position.set(0, size * 1.45, 0);
+            group.add(aura);
+
+            const light = new THREE.PointLight(0xff2868, 3.2, size * 8, 2);
+            light.position.set(0, size * 1.6, size * 0.5);
+            group.add(light);
+
+            group.userData.energyRings = [ringA, ringB];
+            group.userData.chestCore = chest;
+            group.userData.eye = eye;
             return enableShadows(group);
         }
 
@@ -2007,8 +2125,8 @@
             if (name.includes('グレネード')) return 'grenade';
             if (name.includes('火炎')) return 'flame';
             if (name.includes('アシッド')) return 'acid';
-            if (name.includes('クライオ')) return 'cryo';
-            if (name.includes('シーカー')) return 'orb';
+            if (name.includes('冷却')) return 'cryo';
+            if (name.includes('ガイスト')) return 'orb';
             if (name.includes('アルテミス')) return 'photon';
             if (weapon.type === 'missile') return 'missile';
             if (weapon.type === 'rocket') return 'rocket';
@@ -2498,6 +2616,14 @@
                 if (strike.beam) removeMesh(strike.beam);
             });
             supportVisuals.forEach(visual => removeMesh(visual.mesh));
+            bossAttacks.forEach(attack => {
+                if (attack.mesh) removeMesh(attack.mesh);
+                if (attack.warningMesh) removeMesh(attack.warningMesh);
+                if (attack.projectileMesh) removeMesh(attack.projectileMesh);
+                if (attack.targetMesh) removeMesh(attack.targetMesh);
+            });
+            bossAttacks = [];
+            boss = null;
             cancelSupportDesignation();
             supportStrikes = [];
             supportVisuals = [];
@@ -2534,7 +2660,7 @@
             if (b.weaponName?.includes('レーザー') || b.weaponName?.includes('ビーム')) return 'laser';
             if (b.weaponName?.includes('プラズマ') || b.weaponName?.includes('ノヴァ')) return 'plasma';
             if (b.weaponName?.includes('アシッド')) return 'acid';
-            if (b.weaponName?.includes('クライオ')) return 'cryo';
+            if (b.weaponName?.includes('冷却')) return 'cryo';
             if (b.weaponName?.includes('火炎')) return 'flame';
             if (b.weaponName?.includes('フレシェット')) return 'flechette';
             if (b.bounces) return 'ricochet';
@@ -3055,6 +3181,14 @@
             supportStrikes = []; supportVisuals = [];
             lockedTarget = null;
             lockOnEnabled = false;
+            boss = null;
+            bossSpawned = false;
+            bossDefeated = false;
+            bossIntroTimer = 0;
+            bossVictoryTimer = 0;
+            bossAttackNoticeTimer = 0;
+            bossAttackNotice = '';
+            clearBossAttacks();
             currentScene = SCENE.TITLE;
             isClicked = false;
             resetHeldInputs();
@@ -3147,6 +3281,473 @@
             return enemy;
         }
 
+        function createBossGroundRing(x, y, innerRadius, outerRadius, color, opacity = 0.5) {
+            const ring = new THREE.Mesh(
+                new THREE.RingGeometry(innerRadius, outerRadius, 64),
+                new THREE.MeshBasicMaterial({
+                    color,
+                    transparent: true,
+                    opacity,
+                    blending: THREE.AdditiveBlending,
+                    depthWrite: false,
+                    side: THREE.DoubleSide
+                })
+            );
+            ring.rotation.x = -Math.PI / 2;
+            ring.position.set(x, 2.8, y);
+            scene3D.add(ring);
+            return ring;
+        }
+
+        function pointToSegmentDistance(px, py, x1, y1, x2, y2) {
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const lengthSq = dx * dx + dy * dy;
+            if (lengthSq <= 0.0001) return Math.hypot(px - x1, py - y1);
+            const t = Math.max(0, Math.min(1, ((px - x1) * dx + (py - y1) * dy) / lengthSq));
+            const cx = x1 + dx * t;
+            const cy = y1 + dy * t;
+            return Math.hypot(px - cx, py - cy);
+        }
+
+        function getBossPhase(enemy = boss) {
+            if (!enemy || enemy.maxHp <= 0) return 1;
+            const ratio = enemy.hp / enemy.maxHp;
+            if (ratio <= 0.33) return 3;
+            if (ratio <= 0.66) return 2;
+            return 1;
+        }
+
+        function setBossAttackNotice(text, frames = 120) {
+            bossAttackNotice = text;
+            bossAttackNoticeTimer = frames;
+        }
+
+        function createBossLaserAttack(enemy) {
+            const phase = getBossPhase(enemy);
+            const angle = Math.atan2(player.y - enemy.y, player.x - enemy.x);
+            const length = 2600;
+            const x1 = enemy.x;
+            const y1 = enemy.y;
+            const x2 = x1 + Math.cos(angle) * length;
+            const y2 = y1 + Math.sin(angle) * length;
+            const midX = (x1 + x2) * 0.5;
+            const midY = (y1 + y2) * 0.5;
+            const width = 58 + phase * 12;
+
+            const group = new THREE.Group();
+            group.position.set(midX, 25, midY);
+            group.rotation.y = -angle;
+
+            const warning = new THREE.Mesh(
+                new THREE.BoxGeometry(1, 1, 1),
+                new THREE.MeshBasicMaterial({ color: 0xff315c, transparent: true, opacity: 0.42, blending: THREE.AdditiveBlending, depthWrite: false })
+            );
+            warning.scale.set(length, 2.5, 13);
+            group.add(warning);
+
+            const outer = new THREE.Mesh(
+                new THREE.BoxGeometry(1, 1, 1),
+                new THREE.MeshBasicMaterial({ color: 0xff174f, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false })
+            );
+            outer.scale.set(length, 34, width * 2.15);
+            outer.visible = false;
+            group.add(outer);
+
+            const core = new THREE.Mesh(
+                new THREE.BoxGeometry(1, 1, 1),
+                new THREE.MeshBasicMaterial({ color: 0xfff4fb, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false })
+            );
+            core.scale.set(length, 18, width * 0.62);
+            core.visible = false;
+            group.add(core);
+
+            const muzzle = makeGlowSprite(0xff286c, 260 + phase * 40, 0.8);
+            muzzle.position.set(-length * 0.5, 25, 0);
+            group.add(muzzle);
+
+            scene3D.add(group);
+            bossAttacks.push({
+                type: 'laser', enemy, x1, y1, x2, y2, width,
+                phase: 'charge', timer: 84 - phase * 6, activeTimer: 66 + phase * 9,
+                damageCooldown: 0, mesh: group, warning, outer, core, muzzle
+            });
+
+            enemy.attackState = 'laser';
+            enemy.attackTimer = 165;
+            enemy.facingAngle = angle;
+            setBossAttackNotice('EXTREME LASER // 射線から離脱せよ', 165);
+        }
+
+        function createBossShockwaves(x, y, phase) {
+            const count = 2 + phase;
+            for (let i = 0; i < count; i++) {
+                const ring = createBossGroundRing(x, y, 0.82, 1.0, i % 2 === 0 ? 0xff456f : 0xffd1e0, 0.75);
+                ring.scale.set(4, 4, 4);
+                bossAttacks.push({
+                    type: 'shockwave', x, y, radius: 4, maxRadius: 430 + phase * 55,
+                    speed: 12 + phase * 2.2, delay: i * 17, damage: 34 + phase * 8,
+                    hitPlayer: false, mesh: ring
+                });
+            }
+        }
+
+        function startBossSlam(enemy) {
+            const phase = getBossPhase(enemy);
+            enemy.attackState = 'slamWindup';
+            enemy.attackTimer = Math.max(28, 45 - phase * 4);
+            enemy.slamTargetX = Math.max(enemy.size, Math.min(WORLD_WIDTH - enemy.size, player.x));
+            enemy.slamTargetY = Math.max(enemy.size, Math.min(WORLD_HEIGHT - enemy.size, player.y));
+            enemy.slamStartX = enemy.x;
+            enemy.slamStartY = enemy.y;
+            enemy.slamPhase = phase;
+            enemy.slamWarning = createBossGroundRing(enemy.slamTargetX, enemy.slamTargetY, 105, 132, 0xff315f, 0.55);
+            setBossAttackNotice('IMPACT SLAM // 着地点から退避せよ', 145);
+        }
+
+        function spawnBossMeteor(x, y, phase) {
+            x = Math.max(80, Math.min(WORLD_WIDTH - 80, x));
+            y = Math.max(80, Math.min(WORLD_HEIGHT - 80, y));
+            const radius = 72 + phase * 8;
+            const warningMesh = createBossGroundRing(x, y, radius * 0.72, radius, 0xff4b91, 0.52);
+            const projectileMesh = new THREE.Group();
+            const core = new THREE.Mesh(
+                new THREE.IcosahedronGeometry(18 + phase * 2, 1),
+                new THREE.MeshBasicMaterial({ color: 0xff4f9d, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false })
+            );
+            projectileMesh.add(core);
+            projectileMesh.add(makeGlowSprite(0xff2779, 145 + phase * 22, 0.65));
+            projectileMesh.position.set(x, 390, y);
+            scene3D.add(projectileMesh);
+            bossAttacks.push({
+                type: 'meteor', x, y, radius, timer: 62 - phase * 4, maxTimer: 62 - phase * 4,
+                damage: 42 + phase * 9, warningMesh, projectileMesh
+            });
+        }
+
+        function startBossBarrage(enemy) {
+            const phase = getBossPhase(enemy);
+            enemy.attackState = 'barrage';
+            enemy.attackTimer = 155 + phase * 18;
+            enemy.barrageShotsRemaining = 8 + phase * 3;
+            enemy.barrageShotTimer = 0;
+            enemy.barragePhase = phase;
+            setBossAttackNotice('PLASMA RAIN // 複数着弾を確認', enemy.attackTimer);
+        }
+
+        function finishBossAttack(enemy, cooldown = 105) {
+            enemy.attackState = 'idle';
+            enemy.attackTimer = 0;
+            enemy.attackCooldown = cooldown;
+            enemy.currentAttackName = '';
+        }
+
+        function updateBoss(enemy) {
+            if (!enemy || enemy.hp <= 0) return;
+            const phase = getBossPhase(enemy);
+            enemy.phase = phase;
+
+            if (bossIntroTimer > 0) {
+                enemy.facingAngle = Math.atan2(player.y - enemy.y, player.x - enemy.x);
+                enemy.hitScale = Math.max(enemy.hitScale, Math.sin(frameCount * 0.24) * 0.025 + 0.04);
+                return;
+            }
+
+            const distToPlayer = Math.hypot(player.x - enemy.x, player.y - enemy.y);
+            const angle = Math.atan2(player.y - enemy.y, player.x - enemy.x);
+            enemy.facingAngle = angle;
+
+            if (enemy.attackState === 'laser') {
+                enemy.attackTimer--;
+                if (enemy.attackTimer <= 0) finishBossAttack(enemy, Math.max(78, 125 - phase * 12));
+                return;
+            }
+
+            if (enemy.attackState === 'slamWindup') {
+                enemy.attackTimer--;
+                enemy.hitScale = Math.max(enemy.hitScale, 0.06 + Math.abs(Math.sin(frameCount * 0.35)) * 0.08);
+                if (enemy.slamWarning) {
+                    const pulse = 0.94 + Math.sin(frameCount * 0.3) * 0.08;
+                    enemy.slamWarning.scale.set(pulse, pulse, pulse);
+                    enemy.slamWarning.material.opacity = 0.38 + Math.abs(Math.sin(frameCount * 0.24)) * 0.38;
+                }
+                if (enemy.attackTimer <= 0) {
+                    enemy.attackState = 'slamAir';
+                    enemy.attackTimer = 56;
+                    enemy.slamAirDuration = 56;
+                }
+                return;
+            }
+
+            if (enemy.attackState === 'slamAir') {
+                const progress = 1 - enemy.attackTimer / enemy.slamAirDuration;
+                const eased = progress * progress * (3 - 2 * progress);
+                enemy.x = enemy.slamStartX + (enemy.slamTargetX - enemy.slamStartX) * eased;
+                enemy.y = enemy.slamStartY + (enemy.slamTargetY - enemy.slamStartY) * eased;
+                enemy.jumpHeight = Math.sin(progress * Math.PI) * (260 + phase * 35);
+                enemy.attackTimer--;
+                if (enemy.attackTimer <= 0) {
+                    enemy.x = enemy.slamTargetX;
+                    enemy.y = enemy.slamTargetY;
+                    enemy.jumpHeight = 0;
+                    if (enemy.slamWarning) { removeMesh(enemy.slamWarning); enemy.slamWarning = null; }
+                    createExplosion(enemy.x, enemy.y, 175 + phase * 18, 'heavy');
+                    damageObstaclesInRadius(enemy.x, enemy.y, 170 + phase * 20, 90);
+                    if (Math.hypot(player.x - enemy.x, player.y - enemy.y) <= 165 + phase * 16) {
+                        player.hp -= 70 + phase * 12;
+                    }
+                    createBossShockwaves(enemy.x, enemy.y, phase);
+                    screenShake = Math.max(screenShake, 28);
+                    enemy.attackState = 'slamRecover';
+                    enemy.attackTimer = 40;
+                }
+                return;
+            }
+
+            if (enemy.attackState === 'slamRecover') {
+                enemy.attackTimer--;
+                if (enemy.attackTimer <= 0) finishBossAttack(enemy, Math.max(72, 112 - phase * 10));
+                return;
+            }
+
+            if (enemy.attackState === 'barrage') {
+                enemy.attackTimer--;
+                enemy.barrageShotTimer--;
+                if (enemy.barrageShotsRemaining > 0 && enemy.barrageShotTimer <= 0) {
+                    const lead = 14 + phase * 5;
+                    const targetX = player.x + (keys.right ? lead * 6 : 0) - (keys.left ? lead * 6 : 0) + (Math.random() - 0.5) * (250 + phase * 35);
+                    const targetY = player.y + (keys.down ? lead * 6 : 0) - (keys.up ? lead * 6 : 0) + (Math.random() - 0.5) * (250 + phase * 35);
+                    spawnBossMeteor(targetX, targetY, phase);
+                    enemy.barrageShotsRemaining--;
+                    enemy.barrageShotTimer = Math.max(5, 11 - phase * 2);
+                }
+                const strafeAngle = angle + Math.PI * 0.5;
+                enemy.x += Math.cos(strafeAngle) * 0.5 * (enemy.strafeDir || 1);
+                enemy.y += Math.sin(strafeAngle) * 0.5 * (enemy.strafeDir || 1);
+                if (enemy.attackTimer <= 0) finishBossAttack(enemy, Math.max(76, 118 - phase * 10));
+                return;
+            }
+
+            // 通常時はプレイヤーの周囲をゆっくり旋回し、一定間隔で攻撃を切り替える。
+            const preferredDistance = 430 - phase * 25;
+            if (distToPlayer > preferredDistance + 80) {
+                enemy.x += Math.cos(angle) * enemy.speed;
+                enemy.y += Math.sin(angle) * enemy.speed;
+            } else if (distToPlayer < preferredDistance - 100) {
+                enemy.x -= Math.cos(angle) * enemy.speed * 0.72;
+                enemy.y -= Math.sin(angle) * enemy.speed * 0.72;
+            }
+            const orbitAngle = angle + (enemy.strafeDir || 1) * Math.PI * 0.5;
+            enemy.x += Math.cos(orbitAngle) * enemy.speed * 0.55;
+            enemy.y += Math.sin(orbitAngle) * enemy.speed * 0.55;
+
+            enemy.attackCooldown--;
+            if (enemy.attackCooldown <= 0) {
+                enemy.attackPattern = ((enemy.attackPattern ?? -1) + 1) % 3;
+                if (enemy.attackPattern === 0) createBossLaserAttack(enemy);
+                else if (enemy.attackPattern === 1) startBossSlam(enemy);
+                else startBossBarrage(enemy);
+            }
+        }
+
+        function updateBossAttacks() {
+            for (let i = bossAttacks.length - 1; i >= 0; i--) {
+                const attack = bossAttacks[i];
+
+                if (attack.type === 'laser') {
+                    if (!attack.enemy || attack.enemy.hp <= 0) {
+                        removeMesh(attack.mesh);
+                        bossAttacks.splice(i, 1);
+                        continue;
+                    }
+                    attack.timer--;
+                    if (attack.phase === 'charge') {
+                        const pulse = 0.25 + Math.abs(Math.sin(frameCount * 0.32)) * 0.55;
+                        attack.warning.material.opacity = pulse;
+                        attack.warning.scale.z = 10 + pulse * 16;
+                        attack.muzzle.material.opacity = 0.35 + pulse * 0.55;
+                        if (attack.timer <= 0) {
+                            attack.phase = 'active';
+                            attack.timer = attack.activeTimer;
+                            attack.warning.visible = false;
+                            attack.outer.visible = true;
+                            attack.core.visible = true;
+                            screenShake = Math.max(screenShake, 22);
+                        }
+                    } else {
+                        const pulse = 0.82 + Math.sin(frameCount * 0.55) * 0.18;
+                        attack.outer.scale.z = attack.width * 2.15 * pulse;
+                        attack.core.scale.z = attack.width * 0.62 * (1.08 - pulse * 0.08);
+                        attack.outer.material.opacity = 0.46 + Math.abs(Math.sin(frameCount * 0.45)) * 0.22;
+                        attack.damageCooldown--;
+                        if (attack.damageCooldown <= 0 && pointToSegmentDistance(player.x, player.y, attack.x1, attack.y1, attack.x2, attack.y2) <= attack.width + player.size) {
+                            player.hp -= 22 + getBossPhase(attack.enemy) * 5;
+                            screenShake = Math.max(screenShake, 12);
+                            attack.damageCooldown = 9;
+                        }
+                        if (attack.timer <= 0) {
+                            removeMesh(attack.mesh);
+                            bossAttacks.splice(i, 1);
+                        }
+                    }
+                    continue;
+                }
+
+                if (attack.type === 'shockwave') {
+                    if (attack.delay > 0) {
+                        attack.delay--;
+                        attack.mesh.visible = false;
+                        continue;
+                    }
+                    attack.mesh.visible = true;
+                    attack.radius += attack.speed;
+                    const scale = Math.max(1, attack.radius);
+                    attack.mesh.scale.set(scale, scale, scale);
+                    attack.mesh.material.opacity = Math.max(0, 0.82 * (1 - attack.radius / attack.maxRadius));
+                    const dist = Math.hypot(player.x - attack.x, player.y - attack.y);
+                    if (!attack.hitPlayer && Math.abs(dist - attack.radius) <= 24 + player.size) {
+                        player.hp -= attack.damage;
+                        attack.hitPlayer = true;
+                        screenShake = Math.max(screenShake, 13);
+                    }
+                    if (attack.radius >= attack.maxRadius) {
+                        removeMesh(attack.mesh);
+                        bossAttacks.splice(i, 1);
+                    }
+                    continue;
+                }
+
+                if (attack.type === 'meteor') {
+                    attack.timer--;
+                    const ratio = Math.max(0, attack.timer / Math.max(1, attack.maxTimer));
+                    const pulse = 0.9 + Math.sin(frameCount * 0.3 + i) * 0.08;
+                    attack.warningMesh.scale.set(pulse, pulse, pulse);
+                    attack.warningMesh.material.opacity = 0.32 + (1 - ratio) * 0.48;
+                    attack.projectileMesh.position.y = 32 + ratio * 370;
+                    attack.projectileMesh.rotation.y += 0.08;
+                    attack.projectileMesh.rotation.x += 0.04;
+                    if (attack.timer <= 0) {
+                        createExplosion(attack.x, attack.y, attack.radius, 'missile');
+                        if (Math.hypot(player.x - attack.x, player.y - attack.y) <= attack.radius + player.size) {
+                            player.hp -= attack.damage;
+                            screenShake = Math.max(screenShake, 12);
+                        }
+                        damageObstaclesInRadius(attack.x, attack.y, attack.radius, attack.damage * 0.75);
+                        removeMesh(attack.warningMesh);
+                        removeMesh(attack.projectileMesh);
+                        bossAttacks.splice(i, 1);
+                    }
+                }
+            }
+        }
+
+        function clearRegularEnemiesForBoss() {
+            enemies.forEach(enemy => {
+                if (enemy.mesh) removeMesh(enemy.mesh);
+            });
+            enemies = [];
+            enemyBullets.forEach(bullet => removeMesh(bullet.mesh));
+            enemyBullets = [];
+            hazards.forEach(hazard => {
+                if (hazard.mesh) removeMesh(hazard.mesh);
+                if (hazard.warningMesh) removeMesh(hazard.warningMesh);
+            });
+            hazards = [];
+            fireDamageCooldown = 0;
+            playerInFire = false;
+            lockedTarget = null;
+        }
+
+        function spawnBoss() {
+            if (bossSpawned || bossDefeated) return;
+            bossSpawned = true;
+            bossIntroTimer = 180;
+            bossAttackNoticeTimer = 0;
+            clearRegularEnemiesForBoss();
+
+            const size = 78;
+            boss = {
+                x: Math.max(size, Math.min(WORLD_WIDTH - size, player.x)),
+                y: Math.max(size, Math.min(WORLD_HEIGHT - size, player.y - 480)),
+                size,
+                speed: 1.22,
+                hp: 2200,
+                maxHp: 2200,
+                type: 'boss',
+                isBoss: true,
+                name: 'DREADNOUGHT OMEGA',
+                color: 0xff2e70,
+                elite: true,
+                contactDamage: 55,
+                touchCooldown: 0,
+                vx: 0,
+                vy: 0,
+                hitFlash: 0,
+                hitScale: 0,
+                jumpHeight: 0,
+                knockbackResistance: 0.035,
+                attackState: 'idle',
+                attackTimer: 0,
+                attackCooldown: 135,
+                attackPattern: -1,
+                strafeDir: Math.random() < 0.5 ? -1 : 1,
+                facingAngle: 0,
+                phase: 1,
+                mesh: null
+            };
+            boss.mesh = createBossModel(size);
+            boss.mesh.position.set(boss.x, 0, boss.y);
+            scene3D.add(boss.mesh);
+            enemies.push(boss);
+
+            createExplosion(boss.x, boss.y, 235, 'supportKinetic');
+            for (let i = 0; i < 3; i++) {
+                const arrivalRing = createBossGroundRing(boss.x, boss.y, 0.82, 1.0, i % 2 === 0 ? 0xff315f : 0xffffff, 0.78);
+                arrivalRing.scale.set(4, 4, 4);
+                bossAttacks.push({
+                    type: 'shockwave', x: boss.x, y: boss.y, radius: 4, maxRadius: 250 + i * 80,
+                    speed: 12 + i * 2, delay: i * 10, damage: 0, hitPlayer: true, mesh: arrivalRing
+                });
+            }
+            screenShake = Math.max(screenShake, 30);
+            if (lockOnEnabled) acquireClosestTarget();
+        }
+
+        function clearBossAttacks() {
+            bossAttacks.forEach(attack => {
+                if (attack.mesh) removeMesh(attack.mesh);
+                if (attack.warningMesh) removeMesh(attack.warningMesh);
+                if (attack.projectileMesh) removeMesh(attack.projectileMesh);
+                if (attack.targetMesh) removeMesh(attack.targetMesh);
+            });
+            bossAttacks = [];
+        }
+
+        function defeatBoss(enemy, index) {
+            if (bossDefeated) return;
+            bossDefeated = true;
+            bossVictoryTimer = 165;
+            setBossAttackNotice('BOSS DESTROYED // 全武装停止', 165);
+            clearBossAttacks();
+            if (enemy.slamWarning) removeMesh(enemy.slamWarning);
+
+            for (let i = 0; i < 9; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * enemy.size * 1.8;
+                createExplosion(
+                    enemy.x + Math.cos(angle) * distance,
+                    enemy.y + Math.sin(angle) * distance,
+                    95 + Math.random() * 90,
+                    i % 3 === 0 ? 'heavy' : 'nova'
+                );
+            }
+            screenShake = Math.max(screenShake, 38);
+            removeMesh(enemy.mesh);
+            enemies.splice(index, 1);
+            lockedTarget = null;
+            boss = null;
+        }
+
         function updateWaveProgress() {
             const targetWave = getWaveIndexForDefeated(defeatedCount) + 1;
             if (targetWave !== currentWave) {
@@ -3160,6 +3761,7 @@
         }
 
         function spawnEnemyWaveTick() {
+            if (bossSpawned || defeatedCount >= BOSS_TRIGGER_KILLS) return;
             updateWaveProgress();
             const config = getCurrentWaveConfig();
             enemySpawnTimer--;
@@ -3282,6 +3884,8 @@
                 if (killNoticeTimer > 0) killNoticeTimer--;
                 if (killChainTimer > 0) killChainTimer--;
                 else killChain = 0;
+                if (bossIntroTimer > 0) bossIntroTimer--;
+                if (bossAttackNoticeTimer > 0) bossAttackNoticeTimer--;
             }
             if (screenShake > 0) {
                 screenShake *= 0.9;
@@ -3408,6 +4012,14 @@
                         enemySpawnTimer = 30;
                         lockOnEnabled = false;
                         lockedTarget = null;
+                        boss = null;
+                        bossSpawned = false;
+                        bossDefeated = false;
+                        bossIntroTimer = 0;
+                        bossVictoryTimer = 0;
+                        bossAttackNoticeTimer = 0;
+                        bossAttackNotice = '';
+                        clearBossAttacks();
 
                         player.mesh = createPlayerModel();
                         scene3D.add(player.mesh);
@@ -3506,6 +4118,7 @@
                     }
 
                     updateSupportStrikes();
+                    updateBossAttacks();
 
                     if (!wState.isReloading && keys.reload && wState.ammo < weapon.maxAmmo) {
                         cancelSupportDesignation();
@@ -3843,7 +4456,9 @@
                         const angle = Math.atan2(player.y - e.y, player.x - e.x);
                         if (e.touchCooldown > 0) e.touchCooldown--;
 
-                        if (e.type === 'shooter') {
+                        if (e.isBoss) {
+                            updateBoss(e);
+                        } else if (e.type === 'shooter') {
                             if (distToPlayer > 230) { e.x += Math.cos(angle) * e.speed; e.y += Math.sin(angle) * e.speed; }
                             e.fireTimer--;
                             if (e.fireTimer <= 0) {
@@ -3958,17 +4573,26 @@
 
                         if (e.x < e.size) e.x = e.size; else if (e.x > WORLD_WIDTH - e.size) e.x = WORLD_WIDTH - e.size;
                         if (e.y < e.size) e.y = e.size; else if (e.y > WORLD_HEIGHT - e.size) e.y = WORLD_HEIGHT - e.size;
-                        for (let o of obstacles) resolveCollision(e, o);
+                        if (!e.isBoss && e.attackState !== 'slamAir') {
+                            for (let o of obstacles) resolveCollision(e, o);
+                        }
 
                         if (e.mesh) {
                             const warningScale = (e.type === 'bomber' && e.fuse >= 0) ? Math.abs(Math.sin(frameCount * 0.35)) * 0.10 : 0;
                             const scale = 1 + e.hitScale + warningScale;
-                            e.mesh.position.set(e.x, e.hitFlash * 6, e.y);
+                            const verticalOffset = e.isBoss ? (e.jumpHeight || 0) + e.hitFlash * 5 : e.hitFlash * 6;
+                            e.mesh.position.set(e.x, verticalOffset, e.y);
                             e.mesh.scale.set(scale, scale, scale);
-                            e.mesh.rotation.y = e.type === 'charger' && e.chargeState === 'dash'
-                                ? Math.atan2(Math.cos(e.chargeAngle), Math.sin(e.chargeAngle))
-                                : Math.atan2(player.x - e.x, player.y - e.y);
+                            e.mesh.rotation.y = e.isBoss
+                                ? Math.atan2(Math.cos(e.facingAngle || 0), Math.sin(e.facingAngle || 0))
+                                : (e.type === 'charger' && e.chargeState === 'dash'
+                                    ? Math.atan2(Math.cos(e.chargeAngle), Math.sin(e.chargeAngle))
+                                    : Math.atan2(player.x - e.x, player.y - e.y));
                             if (e.mesh.userData.eliteRing) e.mesh.userData.eliteRing.rotation.z += 0.035;
+                            if (e.mesh.userData.energyRings) {
+                                e.mesh.userData.energyRings[0].rotation.z += 0.018 + e.phase * 0.006;
+                                e.mesh.userData.energyRings[1].rotation.z -= 0.026 + e.phase * 0.005;
+                            }
                             e.mesh.traverse((child) => {
                                 if (child.material && 'emissiveIntensity' in child.material) {
                                     if (child.userData.baseEmissiveIntensity === undefined) child.userData.baseEmissiveIntensity = child.material.emissiveIntensity || 0;
@@ -4030,6 +4654,10 @@
                     for (let i = enemies.length - 1; i >= 0; i--) {
                         let e = enemies[i];
                         if (e.hp <= 0) {
+                            if (e.isBoss) {
+                                defeatBoss(e, i);
+                                continue;
+                            }
                             // 弾薬補給はガトリング系の長いリロードを無効化してしまうため削除。
                             // 回復20%、オーバードライブ8%（合計28%）でドロップする。
                             const itemRoll = e.selfDestruct ? 1 : Math.random();
@@ -4105,8 +4733,20 @@
                         }
                     }
 
-                    if (defeatedCount >= 300) { isPaused = false; currentScene = SCENE.RESULT; }
-                    else if (player.hp <= 0) { isPaused = false; currentScene = SCENE.TITLE; }
+                    if (!bossSpawned && defeatedCount >= BOSS_TRIGGER_KILLS) {
+                        spawnBoss();
+                    }
+
+                    if (bossDefeated) {
+                        bossVictoryTimer--;
+                        if (bossVictoryTimer <= 0) {
+                            isPaused = false;
+                            currentScene = SCENE.RESULT;
+                        }
+                    } else if (player.hp <= 0) {
+                        isPaused = false;
+                        currentScene = SCENE.TITLE;
+                    }
                     break;
 
                 case SCENE.RESULT:
@@ -4560,7 +5200,7 @@
             ctx.shadowBlur = 0;
 
             ctx.fillStyle = '#8fc7d1'; ctx.font = '14px "Share Tech Mono"';
-            ctx.fillText('Eliminate 300 hostile units and secure the combat sector.', 400, 385);
+            ctx.fillText('Eliminate 300 hostile units, then destroy the colossal boss.', 400, 385);
             ctx.font = '12px "Share Tech Mono"';
             ctx.fillStyle = '#72f5ff';
             ctx.fillText('ITEMS // CYAN: ARMOR  MAGENTA: OVERDRIVE', 400, 418);
@@ -4669,7 +5309,8 @@
 
         function drawPlayHUD() {
             drawHudPanel(12, 10, 220, player.damageBoostTimer > 0 ? 76 : 52, '#56eaff');
-            drawHudPanel(292, 10, 216, 45, '#8affc7');
+            if (bossSpawned && !bossDefeated) drawHudPanel(250, 8, 538, 70, '#ff4778');
+            else drawHudPanel(292, 10, 216, 45, '#8affc7');
             drawHudPanel(548, 478, 240, 110, '#5affb1');
 
             const margin = 200;
@@ -4714,14 +5355,45 @@
             }
 
             ctx.shadowBlur = 5; ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.font = '20px "Share Tech Mono"';
-            ctx.fillText(`DEFEATED : ${defeatedCount} / 300`, 400, 40);
-            const waveConfig = getCurrentWaveConfig();
-            ctx.font = '11px "Share Tech Mono"';
-            ctx.fillStyle = '#83dfff';
-            ctx.shadowColor = '#28bce8';
-            ctx.shadowBlur = 6;
-            ctx.fillText(`WAVE ${currentWave} / ${WAVE_CONFIGS.length}  //  ${waveConfig.label}  //  HOSTILES ${enemies.length}`, 400, 56);
-            ctx.shadowBlur = 0;
+            if (bossSpawned && !bossDefeated && boss) {
+                const bossHpRatio = Math.max(0, Math.min(1, boss.hp / boss.maxHp));
+                const bossBarX = 272;
+                const bossBarY = 42;
+                const bossBarW = 494;
+                const bossBarH = 18;
+                ctx.font = '15px "Share Tech Mono"';
+                ctx.fillStyle = '#ffe9f1';
+                ctx.shadowColor = '#ff245f';
+                ctx.shadowBlur = 10;
+                ctx.fillText(`BOSS // ${boss.name}  [PHASE ${getBossPhase(boss)}]`, 519, 29);
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = 'rgba(45, 0, 18, 0.92)';
+                ctx.fillRect(bossBarX, bossBarY, bossBarW, bossBarH);
+                const bossGradient = ctx.createLinearGradient(bossBarX, 0, bossBarX + bossBarW, 0);
+                bossGradient.addColorStop(0, '#ff174f');
+                bossGradient.addColorStop(0.55, '#ff4fa1');
+                bossGradient.addColorStop(1, '#fff0f7');
+                ctx.fillStyle = bossGradient;
+                ctx.shadowColor = '#ff2368';
+                ctx.shadowBlur = 12;
+                ctx.fillRect(bossBarX, bossBarY, bossBarW * bossHpRatio, bossBarH);
+                ctx.shadowBlur = 0;
+                ctx.strokeStyle = '#ffd4e2';
+                ctx.lineWidth = 1.5;
+                ctx.strokeRect(bossBarX, bossBarY, bossBarW, bossBarH);
+                ctx.font = '11px "Share Tech Mono"';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(`${Math.max(0, Math.ceil(boss.hp))} / ${boss.maxHp}`, 519, 56);
+            } else {
+                ctx.fillText(`DEFEATED : ${Math.min(defeatedCount, BOSS_TRIGGER_KILLS)} / ${BOSS_TRIGGER_KILLS}`, 400, 40);
+                const waveConfig = getCurrentWaveConfig();
+                ctx.font = '11px "Share Tech Mono"';
+                ctx.fillStyle = '#83dfff';
+                ctx.shadowColor = '#28bce8';
+                ctx.shadowBlur = 6;
+                ctx.fillText(`WAVE ${currentWave} / ${WAVE_CONFIGS.length}  //  ${waveConfig.label}  //  HOSTILES ${enemies.length}`, 400, 56);
+                ctx.shadowBlur = 0;
+            }
 
             ctx.font = '13px "Share Tech Mono"';
             if (lockOnEnabled) {
@@ -4733,6 +5405,31 @@
                 ctx.fillStyle = '#678079';
                 ctx.shadowBlur = 0;
                 ctx.fillText('LOCK ON // OFF', 400, 68);
+            }
+
+            if (bossIntroTimer > 0 && bossSpawned && !bossDefeated) {
+                const introAlpha = Math.min(1, bossIntroTimer / 35, (180 - bossIntroTimer) / 25);
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, introAlpha);
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#fff2f6';
+                ctx.shadowColor = '#ff174f';
+                ctx.shadowBlur = 22;
+                ctx.font = '25px "Share Tech Mono"';
+                ctx.fillText('WARNING // COLOSSAL HOSTILE DETECTED', 400, 140);
+                ctx.font = '16px "Share Tech Mono"';
+                ctx.fillStyle = '#ff6f98';
+                ctx.fillText('DREADNOUGHT OMEGA HAS ENTERED THE COMBAT SECTOR', 400, 168);
+                ctx.restore();
+            } else if (bossAttackNoticeTimer > 0 && bossAttackNotice) {
+                ctx.save();
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#fff0f5';
+                ctx.shadowColor = '#ff245f';
+                ctx.shadowBlur = 14;
+                ctx.font = '16px "Share Tech Mono"';
+                ctx.fillText(bossAttackNotice, 400, 104);
+                ctx.restore();
             }
 
             if (supportDesignation) {
@@ -5019,7 +5716,7 @@
             ctx.fillStyle = '#ffffff'; ctx.font = '25px "Share Tech Mono"';
             ctx.fillText(`TOTAL DEFEATED : ${defeatedCount}`, 400, 310);
             ctx.fillStyle = '#7ca7a1'; ctx.font = '14px "Share Tech Mono"';
-            ctx.fillText('Combat data uploaded. Sector secured.', 400, 350);
+            ctx.fillText('Colossal hostile destroyed. Combat sector secured.', 400, 350);
             if (Math.floor(frameCount / 30) % 2 === 0) {
                 ctx.fillStyle = '#70ffd0'; ctx.shadowColor = '#00ff9d'; ctx.shadowBlur = 10;
                 ctx.font = '18px "Share Tech Mono"';
