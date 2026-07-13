@@ -73,7 +73,6 @@
 <body>
 
     <div id="game-container">
-        <div id="guide">SYSTEM ONLINE... 1920x1080 // 3D MODE ACTIVE</div>
         <canvas id="gameCanvas3D" width="1920" height="1080"></canvas>
         <canvas id="uiCanvas" width="1920" height="1080"></canvas>
     </div>
@@ -193,7 +192,7 @@
         
         const WEAPON_CATEGORIES = [
             {
-                name: 'ASSAULT',
+                name: 'アサルトライフル',
                 weapons: [
                     {
                         name: 'AS-26',
@@ -1139,7 +1138,7 @@
             return false;
         }
 
-        const LOCK_ON_TURN_SPEED = 0.045; // 1フレーム当たり約2.6度
+        const LOCK_ON_TURN_SPEED = 0.06; // 1フレーム当たり約2.6度
 
         // =========================================================
         // --- Three.js (3D) のセットアップ / グラフィック強化 ---
@@ -2515,7 +2514,7 @@
             renderer3D.setSize(SCREEN_WIDTH, SCREEN_HEIGHT, false);
             renderer3D.outputEncoding = THREE.sRGBEncoding;
             renderer3D.toneMapping = THREE.ACESFilmicToneMapping;
-            renderer3D.toneMappingExposure = 1.12;
+            renderer3D.toneMappingExposure = 1.2;
             renderer3D.shadowMap.enabled = true;
             renderer3D.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -3727,7 +3726,7 @@
             if (bossDefeated) return;
             bossDefeated = true;
             bossVictoryTimer = 165;
-            setBossAttackNotice('BOSS DESTROYED // 全武装停止', 165);
+            setBossAttackNotice('MISSION CLEARED', 165);
             clearBossAttacks();
             if (enemy.slamWarning) removeMesh(enemy.slamWarning);
 
@@ -4938,7 +4937,6 @@
             ctx.textAlign = 'center';
             ctx.fillStyle = '#9ff7ff';
             ctx.font = '14px "Share Tech Mono"';
-            ctx.fillText('TACTICAL COMBAT SYSTEM // BUILD 03', 400, 165);
 
             ctx.fillStyle = '#e7fdff';
             ctx.font = '48px "Share Tech Mono"';
@@ -5069,17 +5067,17 @@
                 const shotsPerSecond = (60 / weapon.fireRate).toFixed(1);
                 const reloadSeconds = (weapon.reloadTime / 60).toFixed(1);
                 const statRows = weapon.type === 'support' ? [
-                    ['DAMAGE', String(weapon.damage)],
-                    ['REQUESTS', String(weapon.maxAmmo)],
-                    ['DESIGNATE', `${(weapon.designationTime / 60).toFixed(1)}s`],
-                    ['ARRIVAL', `${(weapon.strikeDelay / 60).toFixed(1)}s`],
-                    ['SUPPORT', weapon.supportKind.toUpperCase()]
+                    ['弾数', String(weapon.maxAmmo) + ' 発'],
+                    ['ダメージ', String(weapon.damage)],
+                    ['ロックオン時間', `${(weapon.designationTime / 60).toFixed(1)} 秒`],
+                    ['着弾までの時間', `${(weapon.strikeDelay / 60).toFixed(1)} 秒`],
+                    ['支援カテゴリ', weapon.supportKind.toUpperCase()]
                 ] : [
-                    ['DAMAGE', String(weapon.damage)],
-                    ['MAGAZINE', String(weapon.maxAmmo)],
-                    ['FIRE RATE', `${shotsPerSecond}/s${weapon.type === 'shotgun' ? ` x${weapon.count}` : ''}`],
-                    ['RELOAD', `${reloadSeconds}s`],
-                    ['PROJECTILE', weapon.type.toUpperCase()]
+                    ['弾数', String(weapon.maxAmmo) + ' 発'],
+                    ['ダメージ', String(weapon.damage)],
+                    ['連射速度', `${shotsPerSecond}${weapon.type === 'shotgun' ? ` x ${weapon.count}` : ''}` + ' 発/sec'],
+                    ['リロード時間', `${reloadSeconds} 秒`],
+                    ['弾カテゴリ', weapon.type.toUpperCase()]
                 ];
                 statRows.forEach((row, index) => {
                     const y = 255 + index * 31;
@@ -5094,16 +5092,16 @@
                 });
 
                 const traits = [];
-                if (weapon.penetrate) traits.push('PENETRATE');
-                if (weapon.blastRadius) traits.push(`BLAST ${weapon.blastRadius}`);
-                if (weapon.turnSpeed) traits.push('HOMING');
-                if (weapon.bounces) traits.push(`BOUNCE x${weapon.bounces}`);
-                if (weapon.timer) traits.push('TIMED FUSE');
-                if (weapon.knockback) traits.push(`PUSH ${weapon.knockback}`);
-                if (weapon.clusterCount) traits.push(`CLUSTER x${weapon.clusterCount}`);
+                if (weapon.penetrate) traits.push('貫通可能');
+                if (weapon.blastRadius) traits.push(`爆発半径 ${weapon.blastRadius}`);
+                if (weapon.turnSpeed) traits.push('ホーミング');
+                if (weapon.bounces) traits.push(`跳躍弾 x${weapon.bounces}`);
+                if (weapon.timer) traits.push('時限信管');
+                if (weapon.knockback) traits.push(`ノックバック ${weapon.knockback}`);
+                if (weapon.clusterCount) traits.push(`クラスター弾 x${weapon.clusterCount}`);
                 if (weapon.lingeringField) traits.push('LINGER');
-                if (weapon.type === 'support') traits.push(`DESIGNATE ${(weapon.designationTime / 60).toFixed(1)}s`);
-                if (weapon.supportKind === 'orbitalLaser') traits.push('CONTINUOUS');
+                if (weapon.type === 'support') traits.push(`指示 ${(weapon.designationTime / 60).toFixed(1)}s`);
+                if (weapon.supportKind === 'orbitalLaser') traits.push('継続');
                 if (weapon.supportKind === 'strafe') traits.push('LINE ATTACK');
                 if (weapon.supportKind === 'clusterBomb') traits.push('SUBMUNITIONS');
                 if (weapon.life) traits.push(`RANGE ${weapon.life}`);
@@ -5130,7 +5128,7 @@
 
                 ctx.fillStyle = selectedSlot ? '#baffdf' : '#6aa99a';
                 ctx.font = '10px "Share Tech Mono"';
-                ctx.fillText(`WEAPON SLOT ${slot + 1}`, rect.x + 10, rect.y + 18);
+                ctx.fillText(`装備スロット ${slot + 1}`, rect.x + 10, rect.y + 18);
                 ctx.fillStyle = '#ffffff';
                 ctx.font = '13px "Share Tech Mono"';
                 ctx.fillText(slotWeapon.name, rect.x + 10, rect.y + 43);
@@ -5151,8 +5149,8 @@
             ctx.beginPath(); ctx.moveTo(619, 360); ctx.lineTo(765, 360); ctx.stroke();
             ctx.fillStyle = '#67a99a';
             ctx.font = '9px "Share Tech Mono"';
-            ctx.fillText('Click a slot, then click a weapon.', 619, 389);
-            ctx.fillText('Selected weapon is equipped instantly.', 619, 405);
+            ctx.fillText('スロットをクリックしてから、', 619, 389);
+            ctx.fillText('武器をクリックしてください', 619, 399);
 
             // 出撃ボタン
             const deployHover = pointInRect(mouse.x, mouse.y, EQUIP_LAYOUT.deployX, EQUIP_LAYOUT.deployY, EQUIP_LAYOUT.deployW, EQUIP_LAYOUT.deployH);
@@ -5180,33 +5178,55 @@
 
         function drawStage() {
             drawHudPanel(95, 72, 610, 455, '#35dfff');
+
             ctx.textAlign = 'center';
-            ctx.fillStyle = '#8feeff'; ctx.font = '14px "Share Tech Mono"';
-            ctx.fillText('STRATEGIC COMMAND / MISSION DATABASE', 400, 112);
-            ctx.fillStyle = '#eaffff'; ctx.font = '32px "Share Tech Mono"';
-            ctx.shadowBlur = 15; ctx.shadowColor = '#20cfff';
-            ctx.fillText('MISSION SELECT', 400, 155);
+
+            // 上部タイトル
+            ctx.fillStyle = '#8feeff';
+            ctx.font = '14px "Share Tech Mono"';
+            ctx.fillText('戦略司令部 / 作戦データベース', 400, 112);
+
+            ctx.fillStyle = '#eaffff';
+            ctx.font = '32px "Share Tech Mono"';
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = '#20cfff';
+            ctx.fillText('ミッション選択', 400, 155);
             ctx.shadowBlur = 0;
 
+            // ミッション情報
             ctx.fillStyle = 'rgba(255, 65, 70, 0.13)';
             ctx.fillRect(145, 225, 510, 115);
+
             ctx.strokeStyle = 'rgba(255, 90, 90, 0.7)';
             ctx.strokeRect(145, 225, 510, 115);
-            ctx.fillStyle = '#ff7777'; ctx.font = '13px "Share Tech Mono"';
-            ctx.fillText('THREAT LEVEL // EXTREME', 400, 258);
-            ctx.fillStyle = '#ffffff'; ctx.font = '25px "Share Tech Mono"';
-            ctx.shadowBlur = 12; ctx.shadowColor = '#ff3344';
-            ctx.fillText('MISSION 01 : 市街防衛作戦', 400, 304);
+
+            ctx.fillStyle = '#ff7777';
+            ctx.font = '13px "Share Tech Mono"';
+            ctx.fillText('WAVE: 4 BOSS: 1', 400, 258);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '25px "Share Tech Mono"';
+            ctx.shadowBlur = 12;
+            ctx.shadowColor = '#ff3344';
+            ctx.fillText('ミッション01：市街防衛作戦', 400, 304);
             ctx.shadowBlur = 0;
 
-            ctx.fillStyle = '#8fc7d1'; ctx.font = '14px "Share Tech Mono"';
-            ctx.fillText('Eliminate 300 hostile units, then destroy the colossal boss.', 400, 385);
+            // ミッション目標
+            ctx.fillStyle = '#8fc7d1';
+            ctx.font = '14px "Share Tech Mono"';
+            ctx.fillText('敵を300体撃破した後、出現する巨大ボスを撃破せよ。', 400, 385);
+
+            // アイテム説明
             ctx.font = '12px "Share Tech Mono"';
             ctx.fillStyle = '#72f5ff';
-            ctx.fillText('ITEMS // CYAN: ARMOR  MAGENTA: OVERDRIVE', 400, 418);
-            ctx.fillStyle = '#48ffba'; ctx.font = '19px "Share Tech Mono"';
-            ctx.shadowBlur = 9; ctx.shadowColor = '#00ff9d';
-            ctx.fillText('PRESS [ENTER] TO DEPLOY  >>', 400, 472);
+            ctx.fillText('アイテム // 水色：アーマー回復 赤紫：一定時間攻撃力UP', 400, 418);
+
+            // 出撃案内
+            ctx.fillStyle = '#48ffba';
+            ctx.font = '19px "Share Tech Mono"';
+            ctx.shadowBlur = 9;
+            ctx.shadowColor = '#00ff9d';
+            ctx.fillText('[ENTER]キーで出撃  >>', 400, 472);
             ctx.shadowBlur = 0;
         }
 
@@ -5308,10 +5328,10 @@
         }
 
         function drawPlayHUD() {
-            drawHudPanel(12, 10, 220, player.damageBoostTimer > 0 ? 76 : 52, '#56eaff');
+            drawHudPanel(-130, 10, 220, player.damageBoostTimer > 0 ? 76 : 52, '#56eaff');
             if (bossSpawned && !bossDefeated) drawHudPanel(250, 8, 538, 70, '#ff4778');
             else drawHudPanel(292, 10, 216, 45, '#8affc7');
-            drawHudPanel(548, 478, 240, 110, '#5affb1');
+            drawHudPanel(650, 478, 240, 110, '#5affb1');
 
             const margin = 200;
             let wAlpha = 0;
@@ -5334,15 +5354,15 @@
             const barW = 200; const barH = 15;
             
             ctx.shadowBlur = 5; ctx.fillStyle = '#fff'; ctx.textAlign = 'left'; ctx.font = '16px "Share Tech Mono"';
-            ctx.fillText(`ARMOR : ${player.hp} / ${player.maxHp}`, 20, 25); 
+            ctx.fillText(`ARMOR : ${player.hp} / ${player.maxHp}`, -120, 25); 
 
             ctx.shadowBlur = 0;
-            ctx.fillStyle = '#300'; ctx.fillRect(20, 35, barW, barH);
+            ctx.fillStyle = '#300'; ctx.fillRect(-120, 35, barW, barH);
             ctx.fillStyle = hpRatio > 0.5 ? '#0f0' : (hpRatio > 0.25 ? '#ff0' : '#f00');
             ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 10;
-            ctx.fillRect(20, 35, barW * hpRatio, barH);
+            ctx.fillRect(-120, 35, barW * hpRatio, barH);
             ctx.shadowBlur = 0;
-            ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.strokeRect(20, 35, barW, barH);
+            ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.strokeRect(-120, 35, barW, barH);
 
             if (player.damageBoostTimer > 0) {
                 const boostSeconds = (player.damageBoostTimer / 60).toFixed(1);
@@ -5350,8 +5370,8 @@
                 ctx.textAlign = 'left'; ctx.font = '11px "Share Tech Mono"';
                 ctx.fillStyle = '#ff668d'; ctx.shadowColor = '#ff245e'; ctx.shadowBlur = 7;
                 ctx.fillText(`OVERDRIVE x2 // ${boostSeconds}s`, 20, 66);
-                ctx.shadowBlur = 0; ctx.fillStyle = 'rgba(80, 10, 25, 0.8)'; ctx.fillRect(20, 70, 200, 4);
-                ctx.fillStyle = '#ff315f'; ctx.fillRect(20, 70, 200 * boostRatio, 4);
+                ctx.shadowBlur = 0; ctx.fillStyle = 'rgba(80, 10, 25, 0.8)'; ctx.fillRect(-120, 70, 200, 4);
+                ctx.fillStyle = '#ff315f'; ctx.fillRect(-120, 70, 200 * boostRatio, 4);
             }
 
             ctx.shadowBlur = 5; ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.font = '20px "Share Tech Mono"';
@@ -5391,7 +5411,7 @@
                 ctx.fillStyle = '#83dfff';
                 ctx.shadowColor = '#28bce8';
                 ctx.shadowBlur = 6;
-                ctx.fillText(`WAVE ${currentWave} / ${WAVE_CONFIGS.length}  //  ${waveConfig.label}  //  HOSTILES ${enemies.length}`, 400, 56);
+                ctx.fillText(`WAVE ${currentWave} / ${WAVE_CONFIGS.length}  //  ${waveConfig.label}  //  HOSTILES ${enemies.length}`, 400, 70);
                 ctx.shadowBlur = 0;
             }
 
@@ -5400,11 +5420,11 @@
                 ctx.fillStyle = lockedTarget ? '#ff6075' : '#ffb347';
                 ctx.shadowColor = ctx.fillStyle;
                 ctx.shadowBlur = 8;
-                ctx.fillText(lockedTarget ? 'LOCK ON // ACTIVE' : 'LOCK ON // SEARCHING', 400, 68);
+                ctx.fillText(lockedTarget ? 'ロックオン中' : 'ターゲット探索中', 400, 550);
             } else {
                 ctx.fillStyle = '#678079';
                 ctx.shadowBlur = 0;
-                ctx.fillText('LOCK ON // OFF', 400, 68);
+                ctx.fillText('ロックオン解除', 400, 550);
             }
 
             if (bossIntroTimer > 0 && bossSpawned && !bossDefeated) {
@@ -5462,10 +5482,10 @@
             }
 
             ctx.fillStyle = '#0f0'; ctx.shadowColor = '#0f0'; ctx.textAlign = 'left'; ctx.font = '12px "Share Tech Mono"';
-            ctx.fillText('[WASD]:MOVE  [CLICK]:FIRE/DESIGNATE  [R]:RELOAD  [C]:WEAPON  [X]:LOCK ON  [F]:TARGET  [ESC/P]:PAUSE', 20, 580);
+            ctx.fillText('[WASD]:移動  [左クリック]:発射  [R]:リロード  [C]:武器切り替え  [X]:ロックオン  [F]:ターゲット切り替え  [ESC/P]:ポーズ', 20, 580);
 
             // 武器HUDはパネル内に2行を固定配置し、文字とアイコンの基準位置を統一する。
-            const weaponPanelX = 548;
+            const weaponPanelX = 650;
             const weaponPanelY = 478;
             const rowHeight = 48;
             for (let i = 0; i < 2; i++) {
@@ -5500,7 +5520,7 @@
 
             const mmW = 180;
             const mmH = mmW * (WORLD_HEIGHT / WORLD_WIDTH);
-            const mmX = UI_BASE_WIDTH - mmW - 20; 
+            const mmX = UI_BASE_WIDTH - mmW + 120; 
             const mmY = 20;
             const scaleX = mmW / WORLD_WIDTH;
             const scaleY = mmH / WORLD_HEIGHT;
