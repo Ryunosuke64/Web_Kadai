@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3Dアクションシューティング 枠組み</title>
+    <title>THE INVADER ATTACK | 3D Action Shooting</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="ranking.js"></script>
     <style>
         /* ==========================================
            CSS: 画面のスタイリングと配置
@@ -82,8 +83,10 @@
            JavaScript: ゲームロジックと3D/2D描画
            ========================================== */
 
-        const SCENE = { TITLE: 0, EQUIP: 1, STAGE: 2, PLAY: 3, RESULT: 4 };
+        const SCENE = { TITLE: 0, EQUIP: 1, STAGE: 2, PLAY: 3, RESULT: 4, RANKING: 5 };
         let currentScene = SCENE.TITLE;
+        const ranking = new window.InvaderRanking();
+        let rankingReturnScene = SCENE.TITLE;
 
         const uiCanvas = document.getElementById('uiCanvas');
         const ctx = uiCanvas.getContext('2d');
@@ -195,6 +198,7 @@
                 name: 'アサルトライフル',
                 weapons: [
                     {
+                        id: 'weapon_001',
                         name: 'AS-26',
                         desc: '扱いやすさを重視した標準型アサルトライフル。|威力・装弾数・連射速度のバランスに優れる。',
                         type: WEAPON_TYPE.NORMAL,
@@ -208,6 +212,7 @@
                     },
 
                     {
+                        id: 'weapon_002',
                         name: 'コマンドA2-D',
                         desc: '命中精度を高めた軽量カービン。|装弾数は少ないが中距離で安定した火力を出せる。',
                         type: WEAPON_TYPE.MACHINE_GUN,
@@ -222,6 +227,7 @@
                     },
 
                     {
+                        id: 'weapon_003',
                         name: 'AS-27R',
                         desc: '長時間の射撃に向いた軽機関銃。|多少弾が散るものの、継続的な制圧力が高い。',
                         type: WEAPON_TYPE.MACHINE_GUN,
@@ -236,6 +242,7 @@
                     },
 
                     {
+                        id: 'weapon_004',
                         name: 'FZXハンドガトリング',
                         desc: '巨大な弾倉と圧倒的な連射力を持つ重火器。|リロード時間が非常に長く、撃ち切るタイミングが重要。',
                         type: WEAPON_TYPE.MACHINE_GUN,
@@ -250,6 +257,7 @@
                     },
 
                     {
+                        id: 'weapon_005',
                         name: 'AS-27D',
                         desc: '一発の威力を高めた大口アサルトライフル。|反動による散らばりはあるが、硬い敵にも有効。',
                         type: WEAPON_TYPE.MACHINE_GUN,
@@ -264,6 +272,7 @@
                     },
 
                     {
+                        id: 'weapon_006',
                         name: '試作型バウンドライフル',
                         desc: '壁や障害物で反射する特殊弾頭を使用した試作兵器。|試作品のため、弾速が遅く、反射回数も少ない。',
                         type: WEAPON_TYPE.NORMAL,
@@ -283,6 +292,7 @@
                 name: 'ショットガン',
                 weapons: [
                     {
+                        id: 'weapon_007',
                         name: 'コンバットショットガン',
                         desc: '近距離で高い瞬間火力を発揮する標準散弾銃。|敵へ接近して全弾命中させると強力。',
                         type: WEAPON_TYPE.SHOTGUN,
@@ -298,6 +308,7 @@
                     },
 
                     {
+                        id: 'weapon_008',
                         name: 'オートショットガン',
                         desc: '連続射撃に対応した自動散弾銃。|一射の威力を抑えた代わりに手数で押し切れる。',
                         type: WEAPON_TYPE.SHOTGUN,
@@ -313,6 +324,7 @@
                     },
 
                     {
+                        id: 'weapon_009',
                         name: 'ヘビースキャッター',
                         desc: '大量の大型散弾を一度に撃ち出す重散弾砲。|射撃間隔は長いが、至近距離で絶大な威力を持つ。',
                         type: WEAPON_TYPE.SHOTGUN,
@@ -328,6 +340,7 @@
                     },
 
                     {
+                        id: 'weapon_010',
                         name: 'フレシェットガン',
                         desc: '細長い針状弾を高速射出する散弾銃。|散弾が敵を貫通し、密集した敵をまとめて攻撃できる。',
                         type: WEAPON_TYPE.SHOTGUN,
@@ -344,6 +357,7 @@
                     },
 
                     {
+                        id: 'weapon_011',
                         name: 'バウンドショット',
                         desc: '壁に当たると反射する特性を持つ特殊弾頭を使用した兵器。|同時に50発を発射し、圧倒的な制圧力を持つ。',
                         type: WEAPON_TYPE.SHOTGUN,
@@ -360,6 +374,7 @@
                     },
 
                     {
+                        id: 'weapon_012',
                         name: 'トライスラッグ',
                         desc: '高威力の大型弾を3発同時に撃ち出す。|散らばりが小さく、中距離でもまとまったダメージを与える。',
                         type: WEAPON_TYPE.SHOTGUN,
@@ -381,6 +396,7 @@
                 name: 'スナイパーライフル',
                 weapons: [
                     {
+                        id: 'weapon_013',
                         name: 'スナイパーライフル',
                         desc: '遠距離から敵を狙い撃つ高精度ライフル。|弾丸は敵を貫通し、直線上の複数目標を攻撃できる。',
                         type: WEAPON_TYPE.SNIPER,
@@ -395,6 +411,7 @@
                     },
 
                     {
+                        id: 'weapon_014',
                         name: '対物ライフル',
                         desc: '極端な威力を持つ大型狙撃銃。|装弾数と射撃間隔を犠牲に、通常敵を一撃で粉砕する。',
                         type: WEAPON_TYPE.SNIPER,
@@ -409,6 +426,7 @@
                     },
 
                     {
+                        id: 'weapon_015',
                         name: 'マークスマンライフル',
                         desc: '狙撃銃とアサルトライフルの中間に位置する武器。|高精度の射撃を比較的短い間隔で繰り返せる。',
                         type: WEAPON_TYPE.SNIPER,
@@ -423,6 +441,7 @@
                     },
 
                     {
+                        id: 'weapon_016',
                         name: 'レーザーライフル',
                         desc: '高速のレーザー弾を連続発射する光学兵器。|弾速と貫通力に優れ、動きの速い敵にも当てやすい。',
                         type: WEAPON_TYPE.SNIPER,
@@ -437,6 +456,7 @@
                     },
 
                     {
+                        id: 'weapon_017',
                         name: 'レールキャノン',
                         desc: '電磁加速した弾体で敵を一直線に撃ち抜く。|威力と貫通力は高いが、次弾発射まで時間がかかる。',
                         type: WEAPON_TYPE.SNIPER,
@@ -451,6 +471,7 @@
                     },
 
                     {
+                        id: 'weapon_018',
                         name: 'ビームリピーター',
                         desc: '細い貫通ビームを高速で繰り返し発射する。|単発威力は低いが、狙い続けることで安定した火力を出す。',
                         type: WEAPON_TYPE.NORMAL,
@@ -470,6 +491,7 @@
                 name: '爆発武器',
                 weapons: [
                     {
+                        id: 'weapon_019',
                         name: 'ロケットランチャー',
                         desc: '着弾地点を中心に爆発を起こす標準型ランチャー。|敵の集団をまとめて攻撃する用途に向く。',
                         type: WEAPON_TYPE.ROCKET,
@@ -486,6 +508,7 @@
                     },
 
                     {
+                        id: 'weapon_020',
                         name: 'ヘビーロケット',
                         desc: '大型弾頭による強烈な爆発を起こす重ロケット砲。|一発ごとのリロードだが、広範囲へ大ダメージを与える。',
                         type: WEAPON_TYPE.ROCKET,
@@ -502,6 +525,7 @@
                     },
 
                     {
+                        id: 'weapon_021',
                         name: 'グレネードランチャー',
                         desc: '壁で反射し、2秒後後に爆発する榴弾を発射。',
                         type: WEAPON_TYPE.ROCKET,
@@ -523,6 +547,7 @@
                     },
 
                     {
+                        id: 'weapon_022',
                         name: 'マイクロミサイル',
                         desc: '小型誘導弾を短い間隔で連射するミサイル兵器。|爆発範囲は狭いが、移動中の敵へ命中させやすい。',
                         type: WEAPON_TYPE.MISSILE,
@@ -540,6 +565,7 @@
                     },
 
                     {
+                        id: 'weapon_023',
                         name: 'ホーミングミサイル',
                         desc: '高性能な誘導装置を搭載したミサイル。|装弾数は少ないが、命中精度と爆発範囲に優れる。',
                         type: WEAPON_TYPE.MISSILE,
@@ -557,6 +583,7 @@
                     },
 
                     {
+                        id: 'weapon_024',
                         name: 'プラズマボム',
                         desc: '低速の巨大プラズマ球を射出する決戦兵器。|着弾時に超広範囲を巻き込む爆発が発生する。',
                         type: WEAPON_TYPE.ROCKET,
@@ -582,6 +609,7 @@
                 name: 'エネルギー兵器',
                 weapons: [
                     {
+                        id: 'weapon_025',
                         name: 'プラズママシンガン',
                         desc: '高温のプラズマ弾を連続射出するエネルギー銃。|実弾兵器より弾速が高く、敵を貫通する。',
                         type: WEAPON_TYPE.NORMAL,
@@ -596,6 +624,7 @@
                     },
 
                     {
+                        id: 'weapon_026',
                         name: 'パルスレーザー',
                         desc: 'レーザー弾を高速連射する。|一発の威力は低いが、精度と連射性能が非常に高い。',
                         type: WEAPON_TYPE.NORMAL,
@@ -610,6 +639,7 @@
                     },
 
                     {
+                        id: 'weapon_027',
                         name: 'スプレッドレーザー',
                         desc: '貫通レーザーを扇状に同時発射する。|中距離から複数の敵をまとめて薙ぎ払える。',
                         type: WEAPON_TYPE.SHOTGUN,
@@ -626,6 +656,7 @@
                     },
 
                     {
+                        id: 'weapon_028',
                         name: 'イオンキャノン',
                         desc: '巨大なイオン弾で直線上の敵を貫く高出力砲。|発射間隔は長いが、非常に高い単発火力を持つ。',
                         type: WEAPON_TYPE.SNIPER,
@@ -640,6 +671,7 @@
                     },
 
                     {
+                        id: 'weapon_029',
                         name: 'アルテミスブラスター',
                         desc: '光子弾を広範囲へばら撒くエネルギー兵器。|一発ごとの火力は低いが、散弾数が多く、|敵集団へ安定して命中する。',
                         type: WEAPON_TYPE.SHOTGUN,
@@ -656,6 +688,7 @@
                     },
 
                     {
+                        id: 'weapon_030',
                         name: 'ノヴァキャノン',
                         desc: '圧縮エネルギー弾が着弾時に大爆発を起こす。|プラズマボムより高速だが、爆発範囲はやや狭い。',
                         type: WEAPON_TYPE.ROCKET,
@@ -677,6 +710,7 @@
                 name: '特殊武器',
                 weapons: [
                     {
+                        id: 'weapon_031',
                         name: '火炎放射器',
                         desc: '高熱の炎を連続して放射する近距離兵器。|炎は徐々に広がりながら敵を貫通する。',
                         type: WEAPON_TYPE.SPRAY,
@@ -693,6 +727,7 @@
                     },
 
                     {
+                        id: 'weapon_032',
                         name: 'アシッドシューター',
                         desc: '強酸性の液体を散布して敵を溶かす。相談数は少ないが、一発ごとの威力が高い。',
                         type: WEAPON_TYPE.SPRAY,
@@ -709,6 +744,7 @@
                     },
 
                     {
+                        id: 'weapon_033',
                         name: '冷却砲',
                         desc: '超低温の粒子を広範囲へ噴射する先進科学研究所の実験兵器。|射程と拡散範囲のバランスがよく、接近戦で扱いやすい。',
                         type: WEAPON_TYPE.SPRAY,
@@ -725,6 +761,7 @@
                     },
 
                     {
+                        id: 'weapon_034',
                         name: 'スーパーバウンドガン',
                         desc: '実戦配備された新型跳躍弾を使用し、|壁や障害物で激しく反射する光弾を発射する究極兵器。',
                         type: WEAPON_TYPE.NORMAL,
@@ -739,6 +776,7 @@
                     },
 
                     {
+                        id: 'weapon_035',
                         name: 'ガイストG2',
                         desc: '敵を追尾する低速エネルギー球を発射する。|高い旋回性能で敵を追い続ける。',
                         type: WEAPON_TYPE.MISSILE,
@@ -756,6 +794,7 @@
                     },
 
                     {
+                        id: 'weapon_036',
                         name: 'ショックウェーブ砲',
                         desc: '着弾地点から広範囲へ衝撃波を発生させる。|単発威力よりも、多数の敵を巻き込むことに特化。',
                         type: WEAPON_TYPE.ROCKET,
@@ -777,6 +816,7 @@
                 name: '支援砲撃',
                 weapons: [
                     {
+                        id: 'weapon_037',
                         name: '120mm迫撃砲支援',
                         desc: 'レーザーで地点を指定し、上空から榴弾を連続着弾させる。|扱いやすい標準型の支援砲撃。',
                         type: WEAPON_TYPE.SUPPORT,
@@ -796,6 +836,7 @@
                     },
 
                     {
+                        id: 'weapon_038',
                         name: '多連装ミサイル支援',
                         desc: '指定地点へ多数の小型ミサイルを降らせる。|広範囲へ素早く攻撃できるが、一発ごとの威力は低い。',
                         type: WEAPON_TYPE.SUPPORT,
@@ -815,6 +856,7 @@
                     },
 
                     {
+                        id: 'weapon_039',
                         name: 'ガンシップ機銃掃射',
                         desc: '指定地点を中心に、上空のガンシップが直線状に掃射する。|細長い範囲を高速で制圧する。',
                         type: WEAPON_TYPE.SUPPORT,
@@ -834,6 +876,7 @@
                     },
 
                     {
+                        id: 'weapon_040',
                         name: '軌道レーザー砲-サテライト',
                         desc: '衛星兵器が指定地点へ高出力レーザーを照射する。|一定時間、範囲内の敵へ継続ダメージを与える。',
                         type: WEAPON_TYPE.SUPPORT,
@@ -852,6 +895,7 @@
                     },
 
                     {
+                        id: 'weapon_041',
                         name: 'クラスター爆撃',
                         desc: '複数の親爆弾が着弾し、周囲へ小型爆弾を散布する。|広範囲の敵集団を長く巻き込める。',
                         type: WEAPON_TYPE.SUPPORT,
@@ -874,6 +918,7 @@
                     },
 
                     {
+                        id: 'weapon_042',
                         name: '軌道レーザー砲-グングニル',
                         desc: '軌道上から超高速の金属弾を落下させる決戦支援兵器。|着弾まで遅いが、単発威力と吹っ飛ばし性能は最大級。',
                         type: WEAPON_TYPE.SUPPORT,
@@ -3164,6 +3209,35 @@
             isMouseDown = false;
         }
 
+        function openRanking() {
+            rankingReturnScene = currentScene === SCENE.RESULT ? SCENE.RESULT : SCENE.TITLE;
+            currentScene = SCENE.RANKING;
+            resetHeldInputs();
+            isClicked = false;
+            ranking.loadRankings();
+        }
+
+        function closeRanking() {
+            currentScene = rankingReturnScene;
+            resetHeldInputs();
+            isClicked = false;
+        }
+
+        function finishGame(outcome) {
+            ranking.finishRun(defeatedCount, outcome);
+            currentScene = SCENE.RESULT;
+            isPaused = false;
+            cancelSupportDesignation();
+            resetHeldInputs();
+            isClicked = false;
+        }
+
+        function returnFromResult() {
+            currentScene = SCENE.TITLE;
+            resetHeldInputs();
+            isClicked = false;
+        }
+
         function setPaused(paused) {
             if (currentScene !== SCENE.PLAY) return;
             isPaused = paused;
@@ -3792,6 +3866,24 @@
             window.addEventListener('mouseup', () => { isMouseDown = false; });
 
             window.addEventListener('keydown', (e) => {
+                if (currentScene === SCENE.RANKING) {
+                    e.preventDefault();
+                    if (!e.repeat && (e.code === 'Escape' || e.code === 'Enter' || e.code === 'Space')) closeRanking();
+                    if (!e.repeat && e.code === 'KeyR' && ranking.board.status !== 'loading') ranking.loadRankings();
+                    return;
+                }
+                if (currentScene === SCENE.TITLE || currentScene === SCENE.RESULT) {
+                    if (e.code === 'KeyL') {
+                        e.preventDefault();
+                        if (!e.repeat) openRanking();
+                        return;
+                    }
+                    if (currentScene === SCENE.RESULT && e.code === 'KeyR') {
+                        e.preventDefault();
+                        if (!e.repeat && ranking.result?.status === 'error') ranking.saveResult();
+                        return;
+                    }
+                }
                 if ((e.code === 'Escape' || e.code === 'KeyP') && currentScene === SCENE.PLAY && !e.repeat) {
                     e.preventDefault();
                     setPaused(!isPaused);
@@ -3898,6 +3990,10 @@
 
             switch (currentScene) {
                 case SCENE.TITLE:
+                    if (isClicked && pointInRect(mouse.x, mouse.y, 245, 422, 310, 46)) {
+                        openRanking();
+                        break;
+                    }
                     if (isClicked || keys.enter) {
                         currentScene = SCENE.EQUIP;
                         equipMainIndex = 0;
@@ -3988,6 +4084,7 @@
                         
                         const w0 = WEAPON_CATEGORIES[equippedWeapons[0].c].weapons[equippedWeapons[0].w];
                         const w1 = WEAPON_CATEGORIES[equippedWeapons[1].c].weapons[equippedWeapons[1].w];
+                        ranking.beginRun([w0, w1]);
                         player.weaponsState = [
                             { ammo: w0.maxAmmo, isReloading: false, reloadTimer: 0 },
                             { ammo: w1.maxAmmo, isReloading: false, reloadTimer: 0 }
@@ -4739,17 +4836,26 @@
                     if (bossDefeated) {
                         bossVictoryTimer--;
                         if (bossVictoryTimer <= 0) {
-                            isPaused = false;
-                            currentScene = SCENE.RESULT;
+                            finishGame('clear');
                         }
                     } else if (player.hp <= 0) {
-                        isPaused = false;
-                        currentScene = SCENE.TITLE;
+                        finishGame('defeat');
                     }
                     break;
 
                 case SCENE.RESULT:
-                    if (isClicked || keys.enter) currentScene = SCENE.TITLE;
+                    if (keys.enter) returnFromResult();
+                    else if (isClicked) {
+                        if (pointInRect(mouse.x, mouse.y, 65, 470, 210, 48)) openRanking();
+                        else if (pointInRect(mouse.x, mouse.y, 295, 470, 210, 48)) returnFromResult();
+                        else if (pointInRect(mouse.x, mouse.y, 525, 470, 210, 48) && ranking.result?.status === 'error') ranking.saveResult();
+                    }
+                    break;
+                case SCENE.RANKING:
+                    if (isClicked) {
+                        if (pointInRect(mouse.x, mouse.y, 140, 510, 240, 44)) closeRanking();
+                        else if (pointInRect(mouse.x, mouse.y, 420, 510, 240, 44) && ranking.board.status !== 'loading') ranking.loadRankings();
+                    }
                     break;
             }
         }
@@ -4921,6 +5027,7 @@
                 case SCENE.STAGE: drawStage(); break;
                 case SCENE.PLAY: drawPlayHUD(); break;
                 case SCENE.RESULT: drawResult(); break;
+                case SCENE.RANKING: drawRanking(); break;
             }
             if (isPaused && currentScene === SCENE.PLAY) drawPauseMenu();
             ctx.restore();
@@ -4960,6 +5067,7 @@
                 ctx.fillText('> PRESS ENTER TO START <', 400, 380);
             }
             ctx.shadowBlur = 0;
+            drawMenuButton(245, 422, 310, 46, '[L] ランキング');
         }
 
         function drawEquip() {
@@ -5723,26 +5831,92 @@
         }
 
         function drawResult() {
-            drawHudPanel(125, 85, 550, 420, '#45ffbd');
+            const result = ranking.result;
+            if (!result) return;
+            const cleared = result.outcome === 'clear';
+            const accent = cleared ? '#45ffbd' : '#ff7f8b';
+            drawHudPanel(40, 55, 720, 490, accent);
             ctx.textAlign = 'center';
-            ctx.fillStyle = '#73ffd0'; ctx.font = '14px "Share Tech Mono"';
-            ctx.fillText('OPERATION STATUS // COMPLETE', 400, 135);
-            ctx.fillStyle = '#effff9'; ctx.font = '41px "Share Tech Mono"';
-            ctx.shadowColor = '#00ff9d'; ctx.shadowBlur = 24;
-            ctx.fillText('MISSION CLEARED', 400, 210);
+            ctx.fillStyle = accent; ctx.font = '13px "Share Tech Mono"';
+            ctx.fillText('OPERATION RESULT', 400, 100);
+            ctx.fillStyle = '#effff9'; ctx.font = '38px "Share Tech Mono"';
+            ctx.shadowColor = accent; ctx.shadowBlur = 20;
+            ctx.fillText(cleared ? 'MISSION CLEARED' : 'MISSION FAILED', 400, 158);
             ctx.shadowBlur = 0;
-            ctx.strokeStyle = 'rgba(74,255,190,0.55)';
-            ctx.beginPath(); ctx.moveTo(205, 235); ctx.lineTo(595, 235); ctx.stroke();
-            ctx.fillStyle = '#ffffff'; ctx.font = '25px "Share Tech Mono"';
-            ctx.fillText(`TOTAL DEFEATED : ${defeatedCount}`, 400, 310);
-            ctx.fillStyle = '#7ca7a1'; ctx.font = '14px "Share Tech Mono"';
-            ctx.fillText('Colossal hostile destroyed. Combat sector secured.', 400, 350);
-            if (Math.floor(frameCount / 30) % 2 === 0) {
-                ctx.fillStyle = '#70ffd0'; ctx.shadowColor = '#00ff9d'; ctx.shadowBlur = 10;
-                ctx.font = '18px "Share Tech Mono"';
-                ctx.fillText('> PRESS ENTER TO RETURN <', 400, 440);
+            ctx.fillStyle = '#ffffff'; ctx.font = '30px "Share Tech Mono"';
+            ctx.fillText(`撃破数  ${result.payload.defeated_count}`, 400, 220);
+            ctx.font = '15px "Share Tech Mono"';
+            ctx.fillStyle = '#96d7e0';
+            ctx.fillText(`装備 1  /  ${result.weapons[0].name}`, 400, 270, 650);
+            ctx.fillText(`装備 2  /  ${result.weapons[1].name}`, 400, 306, 650);
+            ctx.fillStyle = result.status === 'error' ? '#ff9c9c' : '#8cffe0';
+            ctx.font = '16px "Share Tech Mono"';
+            const statusText = result.status === 'saved' ? 'ランキングに保存しました'
+                : result.status === 'error' ? '保存できませんでした' : 'ランキングに保存中…';
+            ctx.fillText(statusText, 400, 368);
+            ctx.fillStyle = '#a4bdc8'; ctx.font = '12px "Share Tech Mono"';
+            ctx.fillText(result.status === 'error' ? result.error : '撃破数の多い順にランキングへ記録されます。', 400, 400, 650);
+            if (result.status === 'error') ctx.fillText('再試行すると、同じプレイの結果を再送します。', 400, 424);
+            drawMenuButton(65, 470, 210, 48, '[L] ランキング');
+            drawMenuButton(295, 470, 210, 48, '[ENTER] タイトル');
+            drawMenuButton(525, 470, 210, 48, '[R] 保存を再試行', result.status === 'error');
+        }
+
+        function drawMenuButton(x, y, w, h, label, enabled = true) {
+            const hover = enabled && pointInRect(mouse.x, mouse.y, x, y, w, h);
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = hover ? 'rgba(45, 190, 215, 0.28)' : 'rgba(8, 35, 48, 0.8)';
+            ctx.fillRect(x, y, w, h);
+            ctx.strokeStyle = enabled ? '#4bb6c8' : '#29404a';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x, y, w, h);
+            ctx.fillStyle = enabled ? '#c2f5ff' : '#546a73';
+            ctx.textAlign = 'center';
+            ctx.font = '14px "Share Tech Mono"';
+            ctx.fillText(label, x + w / 2, y + h / 2 + 5);
+        }
+
+        function drawRanking() {
+            const board = ranking.board;
+            drawHudPanel(10, 20, 780, 550, '#55e6ff');
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#e2faff'; ctx.font = '30px "Share Tech Mono"';
+            ctx.fillText('RANKING / TOP 10', 400, 70);
+            ctx.fillStyle = '#8cbdc9'; ctx.font = '12px "Share Tech Mono"';
+            ctx.fillText('撃破数順・同じ撃破数は同順位 / クリア・敗北のプレイ記録', 400, 100);
+            ctx.textAlign = 'left'; ctx.fillStyle = '#62dbeb'; ctx.font = '13px "Share Tech Mono"';
+            ctx.fillText('順位', 45, 139);
+            ctx.fillText('撃破数', 115, 139);
+            ctx.fillText('装備 1', 220, 139);
+            ctx.fillText('装備 2', 495, 139);
+            if (board.status === 'ready' && board.rows.length) {
+                board.rows.forEach((row, index) => {
+                    const y = 160 + index * 29;
+                    const isOwn = row.id === ranking.result?.savedId;
+                    ctx.fillStyle = isOwn ? 'rgba(40, 220, 166, 0.19)' : index % 2 === 0 ? 'rgba(50, 110, 140, 0.12)' : 'rgba(0, 0, 0, 0)';
+                    ctx.fillRect(30, y - 4, 740, 28);
+                    ctx.fillStyle = isOwn ? '#8fffd5' : '#def0f6';
+                    ctx.font = '13px "Share Tech Mono"';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(String(row.rank), 45, y + 15);
+                    ctx.fillText(String(row.defeated_count), 115, y + 15, 90);
+                    ctx.fillText(row.weapon_1_name, 220, y + 15, 255);
+                    ctx.fillText(row.weapon_2_name, 495, y + 15, 255);
+                });
+            } else {
+                ctx.textAlign = 'center'; ctx.font = '16px "Share Tech Mono"';
+                ctx.fillStyle = board.status === 'error' ? '#ff9c9c' : '#b7dae3';
+                const text = board.status === 'loading' ? 'ランキングを読み込み中…'
+                    : board.status === 'error' ? board.error : 'まだ記録がありません。最初の出撃に挑戦しましょう。';
+                ctx.fillText(text, 400, 285, 700);
             }
-            ctx.shadowBlur = 0;
+            ctx.textAlign = 'center'; ctx.font = '12px "Share Tech Mono"';
+            ctx.fillStyle = '#92bec6';
+            const unsaved = rankingReturnScene === SCENE.RESULT && ranking.result?.status === 'error';
+            ctx.fillText(unsaved ? '今回の結果は未保存です。結果画面から保存を再試行できます。'
+                : '同順位の記録は登録順に表示 / 緑色の行は今回の記録', 400, 481);
+            drawMenuButton(140, 510, 240, 44, '[ENTER / ESC] 戻る');
+            drawMenuButton(420, 510, 240, 44, '[R] 更新', board.status !== 'loading');
         }
 
         // =========================================================

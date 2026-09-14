@@ -1,0 +1,4 @@
+Options -Indexes
+RewriteEngine On
+RewriteRule ^(?:database|scripts|tests)(?:/|$) - [F,L]
+RewriteRule (^|/)\. - [F,L]
