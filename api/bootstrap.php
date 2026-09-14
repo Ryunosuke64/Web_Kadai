@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/database.php';
 
 function respond(array $data, int $status = 200): never
 {
@@ -17,20 +18,6 @@ function requireMethod(string $method): void
         header('Allow: ' . $method);
         respond(['error' => 'このHTTPメソッドには対応していません。'], 405);
     }
-}
-
-function database(): PDO
-{
-    $config = require __DIR__ . '/config.php';
-    return new PDO(
-        "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4",
-        $config['username'],
-        $config['password'],
-        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-         PDO::ATTR_EMULATE_PREPARES => false,
-         PDO::ATTR_TIMEOUT => 3]
-    );
 }
 
 function weaponCatalog(): array

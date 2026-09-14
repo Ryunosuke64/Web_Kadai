@@ -2,7 +2,21 @@
 
 LaragonのPHPとMySQLで、1プレイごとの撃破数と出撃時に選んだ2つの武器を保存します。
 
-## このPCですぐ起動する
+## Laragonで起動する（コマンド不要）
+
+1. プロジェクト一式をLaragonの公開フォルダー（標準: `C:\laragon\www\Web_Kadai`）に配置します。
+2. LaragonでApacheとMySQLを起動します。
+3. `http://localhost/Web_Kadai/` を開きます。
+
+初めてランキングを表示するか、ゲーム終了時に結果を保存すると、DBとテーブルを自動作成します。初期化コマンドや初期化用ファイルのクリックは不要です。既存の記録は保持されます。
+
+PHP 8.1以上と`pdo_mysql`が必要です。DB接続情報が下記の初期値と異なるPCでは、接続設定の調整が必要です。自動作成にはMySQLユーザーのDB・テーブル作成権限が必要です。
+
+HTMLファイルの直接起動やGitHub PagesだけではPHPのAPIは動作しません。ゲームとAPIを同じサーバーから配信してください。ゲームのThree.jsは外部CDNから取得するため、ネット接続も必要です。
+
+PCごとにLaragonを動かす場合、ランキングはそれぞれのPCのDBに保存されます。
+
+## 開発用サーバーで起動する（任意）
 
 1. LaragonでMySQLを起動します。
 2. このプロジェクトでPowerShellを開き、次を実行します。
@@ -16,12 +30,6 @@ LaragonのPHPとMySQLで、1プレイごとの撃破数と出撃時に選んだ2
 スクリプトはPATH、次に `C:\laragon\bin\php` からPHPを探し、DB・テーブルを作成して開発サーバーを起動します。既存の記録は保持されます。終了はCtrl+Cです。
 
 ポートが使用中の場合は `-Port 8081`、PHPが別の場所にある場合は `-PhpPath 'D:\laragon\bin\php\バージョン\php.exe'` を指定してください。
-
-## LaragonのApacheから利用する場合
-
-プロジェクト一式をLaragonの公開フォルダー（標準: `C:\laragon\www\Web_Kadai`）に配置します。Laragon Terminalでプロジェクトに移動し、`php scripts/setup-db.php` を実行してください。ApacheとMySQLを起動し、`http://localhost/Web_Kadai/` から開けます。
-
-HTMLファイルの直接起動やGitHub PagesだけではPHPのAPIは動作しません。ゲームとAPIを同じサーバーから配信してください。
 
 ## DB接続設定
 
@@ -47,9 +55,10 @@ HTMLファイルの直接起動やGitHub PagesだけではPHPのAPIは動作し�
 - `ranking.js`: 出撃時の装備記録、API通信、再試行・表示状態の管理
 - `api/save_result.php`: JSONによる保存。型・武器IDを検証しPDOで登録
 - `api/rankings.php`: 撃破数順の上位10件をJSONで返却
+- `api/database.php`: DB接続と、未作成の場合だけDB・テーブルを自動作成
 - `api/weapons.json`: 固定武器IDと日本語表示名の対応
 - `database/schema.sql`: 保存用テーブル定義
-- `scripts/setup-db.php`: CLI専用のDB初期化。既存データを削除しない
+- `scripts/setup-db.php`: 開発者向けの任意のDB初期化。APIと同じ処理を利用
 
 武器の並べ替えでもIDは変更しないでください。武器を追加・改名した場合は、ゲーム側の設定と `api/weapons.json` の両方を更新します。
 

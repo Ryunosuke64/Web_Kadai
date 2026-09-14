@@ -12,13 +12,25 @@ const env = {...process.env, INVADER_DB_NAME:dbName};
 let server;
 let databaseCreated = false;
 
+function sql(statement) {
+    assert.match(dbName, /^invader_test_[0-9a-f]{32}$/);
+    const result = spawnSync(php, ['-r', `
+        $config = require "api/config.php";
+        $pdo = new PDO("mysql:host={$config['host']};port={$config['port']};charset=utf8mb4",
+            $config['username'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        $pdo->exec(getenv("INVADER_TEST_SQL"));
+    `], {env:{...env, INVADER_TEST_SQL:statement}, encoding:'utf8'});
+    if (result.error) throw result.error;
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(result.stdout, '');
+}
+
 async function main() {
     // 個別設定ファイルがテストDB指定を上書きする場合は、実データに触る前に停止。
     const config = spawnSync(php, ['-r', 'echo (require "api/config.php")["database"];'], {env, encoding:'utf8'});
     if (config.error) throw config.error;
     assert.equal(config.stdout, dbName, 'config.local.phpのdatabase指定を外してテストしてください。');
-    const setup = spawnSync(php, ['scripts/setup-db.php'], {env, encoding:'utf8'});
-    assert.equal(setup.status, 0, setup.stderr);
+    // setup-db.phpを実行せず、APIだけで初期化できることを確認する。
     databaseCreated = true;
     const socket = net.createServer(); socket.listen(0, '127.0.0.1'); await once(socket, 'listening');
     const port = socket.address().port; await new Promise(resolve => socket.close(resolve));
@@ -33,7 +45,11 @@ async function main() {
         return {status:response.status, data:await response.json()};
     };
     const result = count => ({run_id:randomUUID(), defeated_count:count, weapon_1_id:'weapon_001', weapon_2_id:'weapon_042'});
-    assert.deepEqual((await read('api/rankings.php')).data.rankings, []);
+    const empty = await read('api/rankings.php');
+    assert.equal(empty.status, 200);
+    assert.deepEqual(empty.data.rankings, []);
+    // DBだけ存在する場合も、初回保存時にテーブルが作成される。
+    sql(`DROP TABLE \`${dbName}\`.play_results`);
     assert.equal((await read('api/save_result.php')).status, 405);
     assert.equal((await save('{')).status, 400);
     assert.equal((await save(result(1), 'text/plain')).status, 415);
@@ -60,23 +76,29 @@ async function main() {
     assert.equal(rows.length, 10);
     assert.deepEqual(rows.map(r => r.defeated_count), [300,300,11,10,9,8,7,6,5,4]);
     assert.equal((await fetch(base+'scripts/setup-db.php')).status, 404);
-    // 専用DBだけを削除して、DB利用不可時のJSONエラーを検証する。
-    assert.match(dbName, /^invader_test_[0-9a-f]{32}$/);
-    const removed = spawnSync(php, ['-r', 'require "api/bootstrap.php"; database()->exec("DROP DATABASE `" . getenv("INVADER_DB_NAME") . "`");'], {env, encoding:'utf8'});
-    assert.equal(removed.status, 0);
-    assert.equal(removed.stdout, '');
-    databaseCreated = false;
+    // 通常のアクセスと明示的な初期化を繰り返しても記録を保持する。
+    const setup = spawnSync(php, ['scripts/setup-db.php'], {env, encoding:'utf8'});
+    assert.equal(setup.status, 0, setup.stderr);
+    assert.deepEqual((await read('api/rankings.php')).data.rankings, rows);
+    // ランキングを開かず初回保存した場合もDBから自動作成される。
+    sql(`DROP DATABASE \`${dbName}\``);
+    const fresh = result(42);
+    assert.equal((await save(fresh)).status, 201);
+    assert.deepEqual((await read('api/rankings.php')).data.rankings.map(r => r.defeated_count), [42]);
+    // 既存テーブルの異常は、作り直してデータを消さずJSONエラーにする。
+    sql(`ALTER TABLE \`${dbName}\`.play_results DROP COLUMN weapon_1_id`);
     const unavailable = await read('api/rankings.php');
     assert.equal(unavailable.status, 503);
     assert.equal(typeof unavailable.data.error, 'string');
     assert.equal(unavailable.data.error.includes('SQLSTATE'), false);
-    console.log('PASS: MySQL save, zero kills, duplicate, conflict, validation, names, tied ranks, top 10, private paths, DB unavailable');
+    assert.equal((await save(result(1))).status, 503);
+    sql(`ALTER TABLE \`${dbName}\`.play_results ADD COLUMN weapon_1_id VARCHAR(64) NOT NULL DEFAULT 'weapon_001'`);
+    assert.deepEqual((await read('api/rankings.php')).data.rankings.map(r => r.defeated_count), [42]);
+    console.log('PASS: automatic DB/table setup on read/save, preserved records, zero kills, duplicate, conflict, validation, names, tied ranks, top 10, private paths, DB error');
 }
 main().catch(error => { console.error(error); process.exitCode=1; }).finally(async () => {
     if (server && server.exitCode === null) { server.kill(); await once(server, 'exit'); }
     if (databaseCreated) {
-        assert.match(dbName, /^invader_test_[0-9a-f]{32}$/);
-        const cleanup = spawnSync(php, ['-r', 'require "api/bootstrap.php"; database()->exec("DROP DATABASE `" . getenv("INVADER_DB_NAME") . "`");'], {env, encoding:'utf8'});
-        if (cleanup.status !== 0 || cleanup.stdout) { console.error('Test DB cleanup failed', cleanup.stderr); process.exitCode=1; }
+        sql(`DROP DATABASE IF EXISTS \`${dbName}\``);
     }
 });
